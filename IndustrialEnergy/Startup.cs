@@ -1,6 +1,7 @@
 using IndustrialEnergy.Data;
 using IndustrialEnergy.MongoDB;
 using IndustrialEnergy.MongoDB.Collections;
+using IndustrialEnergy.MongoDB.Collections.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
