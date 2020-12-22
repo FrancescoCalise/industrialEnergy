@@ -1,18 +1,72 @@
 ﻿@page "/"
-@using IndustrialEnergy.MongoDB.Collections.Models
-@inject FirstCollection ForecastService
+@using IndustrialEnergy.Components
+@inject IJSRuntime _JsRuntine
+@inject ServiceComponent Service
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+<div class="col-md-6">
+    User Id:
+    <input class="form-control" @bind="userId" />
+    Password:
+    <input class="form-control" @bind="pass" />
+    <br />
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    <button class="btn btn-info" @onclick="@(() => CreateToken())"> Login / Create Token</button>
+    <button class="btn btn-info" @onclick="@(() => PostMethod())"> Post</button>
+    <hr />
+    <br />
 
+    <label class="col-form-label">@Bearer</label>
+    <label class="col-form-label">@Message</label>
 
-@code {
+</div>
 
-    protected override async Task OnInitializedAsync()
+@code{
+    string userId;
+    string pass;
+    string Message;
+
+    [Parameter]
+    public string Bearer { get; set; }
+
+    public void CreateToken()
     {
+        Message = "";
+        Bearer = "";
 
+        var response = Service.ResponseJson("http://localhost:61171/api/login?userId=" + userId + "&pass=" + pass + "", null, null, null, RestSharp.Method.GET);
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var json = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content)["token"].ToString();
+            Bearer = json;
+            Message = "Create Token Success:" + response.StatusCode.ToString();
+        }
+        else
+        {
+            Message = "Create Token Error:" + response.StatusCode.ToString();
+
+        }
+
+    }
+
+    public void PostMethod()
+    {
+        Message = "";
+        Dictionary<string, string> header = new Dictionary<string, string>();
+        header.Add("Authorization", "Bearer" + " " + Bearer);
+        var value = Guid.NewGuid().ToString();
+
+        var response = Service.ResponseJsonAuth("http://localhost:61171/api/login", value, header, RestSharp.Method.POST);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            Message = "Post Success:" + response.StatusCode.ToString();
+        }
+        else
+        {
+            Message = "Post Error:" + response.StatusCode.ToString();
+
+        }
     }
 }

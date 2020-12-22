@@ -1,7 +1,9 @@
+using IndustrialEnergy.Components;
 using IndustrialEnergy.Data;
 using IndustrialEnergy.MongoDB;
 using IndustrialEnergy.MongoDB.Collections;
 using IndustrialEnergy.MongoDB.Collections.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -9,11 +11,13 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace IndustrialEnergy
@@ -36,8 +40,22 @@ namespace IndustrialEnergy
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton(_configuration);
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(option =>
+                {
+                    option.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience =true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = _configuration["Jwt:Issuer"],
+                        ValidAudience = _configuration["Jwt:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
+                    };
+                });
             services.AddSingleton<WeatherForecastService>();
-            services.AddSingleton<FirstCollection>();
+            services.AddSingleton<ServiceComponent>();
 
         }
 
@@ -60,9 +78,13 @@ namespace IndustrialEnergy
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
+                endpoints.MapDefaultControllerRoute(); //Add
                 endpoints.MapFallbackToPage("/_Host");
             });
         }
