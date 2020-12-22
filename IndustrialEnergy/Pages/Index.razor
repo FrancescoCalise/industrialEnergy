@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using IndustrialEnergy.Components
+@inject ILocalStorageService localStore
 @inject IJSRuntime _JsRuntine
 @inject ServiceComponent Service
 
@@ -30,16 +31,16 @@
     [Parameter]
     public string Bearer { get; set; }
 
-    public void CreateToken()
+    public async void CreateToken()
     {
         Message = "";
-        Bearer = "";
 
         var response = Service.ResponseJson("http://localhost:61171/api/login?userId=" + userId + "&pass=" + pass + "", null, null, null, RestSharp.Method.GET);
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            var json = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content)["token"].ToString();
-            Bearer = json;
+            var token = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content)["token"].ToString();
+            await localStore.SetItemAsync("jwt", "Bearer " + token);
+
             Message = "Create Token Success:" + response.StatusCode.ToString();
         }
         else
@@ -50,11 +51,13 @@
 
     }
 
-    public void PostMethod()
+
+    public async void PostMethod()
     {
         Message = "";
+        string token = await localStore.GetItemAsync<string>("jwt");
         Dictionary<string, string> header = new Dictionary<string, string>();
-        header.Add("Authorization", "Bearer" + " " + Bearer);
+        header.Add("Authorization", token);
         var value = Guid.NewGuid().ToString();
 
         var response = Service.ResponseJsonAuth("http://localhost:61171/api/login", value, header, RestSharp.Method.POST);
