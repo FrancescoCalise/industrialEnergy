@@ -3,8 +3,6 @@
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
 
-<h1>Hello, world!</h1>
-
 <div class="col-md-6 offset-md-3 mt-5">
     <div class="alert alert-info">
         Username: test<br />
@@ -72,8 +70,7 @@
             IRestResponse response = await AuthenticationService.Login(model.Username, model.Password);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var returnUrl = NavigationManager.QueryString("returnUrl") ?? "";
-                NavigationManager.NavigateTo(returnUrl);
+                NavigationManager.NavigateTo("");
             }
             else
             {

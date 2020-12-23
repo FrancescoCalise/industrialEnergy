@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using System;
 using System.Net;
 
-namespace IndustrialEnergy.Helpers
+namespace IndustrialEnergy.AppRouteAuth
 {
     public class AppRouteView : RouteView
     {
