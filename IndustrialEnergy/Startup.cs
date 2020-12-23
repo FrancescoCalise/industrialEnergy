@@ -4,6 +4,7 @@ using IndustrialEnergy.Data;
 using IndustrialEnergy.MongoDB;
 using IndustrialEnergy.MongoDB.Collections;
 using IndustrialEnergy.MongoDB.Collections.Models;
+using IndustrialEnergy.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.JSInterop;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -57,7 +59,9 @@ namespace IndustrialEnergy
                     };
                 });
             services.AddSingleton<WeatherForecastService>();
-            services.AddSingleton<ServiceComponent>();
+            services.AddScoped<ILocalStorageService, LocalStorageService>();
+            services.AddScoped<IServiceComponent, ServiceComponent>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
         }
 

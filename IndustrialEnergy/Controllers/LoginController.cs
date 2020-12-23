@@ -1,4 +1,4 @@
-﻿using IndustrialEnergy.MongoDB.Collections.Models;
+﻿using IndustrialEnergy.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,7 @@ namespace IndustrialEnergy.Controllers
         [HttpGet]
         public IActionResult Login(string userId="", string pass="")
         {
-            UserModel login = new UserModel();
+            User login = new User();
             login.UserName = userId;
             login.Password = pass;
 
@@ -46,7 +46,7 @@ namespace IndustrialEnergy.Controllers
             return response;
         }
 
-        private string GenerateJSONWebToken(UserModel user)
+        private string GenerateJSONWebToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -72,13 +72,13 @@ namespace IndustrialEnergy.Controllers
             return encodeToken;
         }
 
-        private UserModel AuthenticateUser(UserModel login)
+        private User AuthenticateUser(User login)
         {
             // QUI DEVO CONTROLLARE L'UTENTE A DB
-            var user = new UserModel();
+            var user = new User();
             if(login.UserName == "test" && login.Password == "123")
             {
-                user = new UserModel
+                user = new User
                 {
                     UserName = "test",
                     Email = "francescocalise1994@gmail.com",
