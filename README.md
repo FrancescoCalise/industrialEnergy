@@ -1,2 +1,0 @@
-# industrialEnergy
-Project Thesis
