@@ -55,17 +55,30 @@
         public string Password { get; set; }
     }
 
-    //[Parameter]
-    //public string Bearer { get; set; }
+    protected override void OnInitialized()
+    {
+        // redirect to home if already logged in
+        if (AuthenticationService.IsValidToken())
+        {
+            NavigationManager.NavigateTo("");
+        }
+    }
 
     private async void HandleValidSubmit()
     {
         loading = true;
         try
         {
-            string message = await AuthenticationService.Login(model.Username, model.Password);
-            //var returnUrl = NavigationManager.QueryString("returnUrl") ?? "";
-            //NavigationManager.NavigateTo(returnUrl);
+            IRestResponse response = await AuthenticationService.Login(model.Username, model.Password);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var returnUrl = NavigationManager.QueryString("returnUrl") ?? "";
+                NavigationManager.NavigateTo(returnUrl);
+            }
+            else
+            {
+                //ERRORE ALLERT?
+            }
         }
         catch (Exception ex)
         {
