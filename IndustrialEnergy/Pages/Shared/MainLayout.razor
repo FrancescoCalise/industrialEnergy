@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject IAuthenticationService AuthenticationService
 
 <div class="page">
     <div class="sidebar">
@@ -6,10 +7,10 @@
     </div>
 
     <div class="main">
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
+        @if (AuthenticationService.IsValidToken())
+        {
+            <TopMenu />
+        }
         <div class="content px-4">
             @Body
         </div>
