@@ -1,6 +1,5 @@
 using Blazored.LocalStorage;
 using IndustrialEnergy.Components;
-using IndustrialEnergy.Data;
 using IndustrialEnergy.MongoDB;
 using IndustrialEnergy.MongoDB.Collections;
 using IndustrialEnergy.MongoDB.Collections.Models;
@@ -14,7 +13,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.JSInterop;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -58,10 +56,12 @@ namespace IndustrialEnergy
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
                     };
                 });
-            services.AddSingleton<WeatherForecastService>();
             services.AddScoped<ILocalStorageService, LocalStorageService>();
             services.AddScoped<IServiceComponent, ServiceComponent>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<MongoDBContext>();
+            services.AddScoped<MockupService>();
+            services.AddScoped<IUserService, UserService>();
 
         }
 

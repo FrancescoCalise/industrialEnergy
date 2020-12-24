@@ -22,11 +22,11 @@ namespace IndustrialEnergy.Components
         public IRestResponse ResponseJson(string url, object requestBody, Dictionary<string, string> requesteHeader, List<Parameter> requestParameter, Method method)
         {
             var client = new RestClient(url);
-
+            
             var request = new RestRequest(method)
             {
                 RequestFormat = DataFormat.Json,
-                JsonSerializer = new CamelCaseSerializer()
+                JsonSerializer = new CamelCaseSerializer(),
             };
 
             if (requesteHeader != null)

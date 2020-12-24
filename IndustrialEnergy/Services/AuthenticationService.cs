@@ -54,7 +54,7 @@ namespace IndustrialEnergy.Services
 
         public async Task<IRestResponse> Login(string username, string password)
         {
-            string message = string.Empty;
+
             var response = _serviceComponent.ResponseJson(_navigationManager.BaseUri + "api/login?userId=" + username + "&pass=" + password + "", null, null, null, RestSharp.Method.GET);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)

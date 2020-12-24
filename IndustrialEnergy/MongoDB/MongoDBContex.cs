@@ -1,5 +1,6 @@
 using System;
 using IndustrialEnergy.MongoDB.Collections;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -8,8 +9,7 @@ namespace IndustrialEnergy.MongoDB
 {
     public class MongoDBContext
     {
-        private IMongoDatabase _mongoDB;
-
+        public IMongoDatabase _mongoDbContex;
         public class ConnectionDBConfiguration
         {
             public string ConnectionString { get; set; }
@@ -17,24 +17,19 @@ namespace IndustrialEnergy.MongoDB
 
         }
 
-        public MongoDBContext(IConfiguration configuration)
+        public MongoDBContext(IConfiguration Configuration)
         {
             
             ConnectionDBConfiguration _connectionDB = new ConnectionDBConfiguration()
             {
-                ConnectionString = configuration.GetSection("MongoDB:ConnectionString").Value,
-                Name = configuration.GetSection("MongoDB:Name").Value
+                ConnectionString = Configuration.GetSection("MongoDB:ConnectionString").Value,
+                Name = Configuration.GetSection("MongoDB:Name").Value
             };
 
             //get the database
             var client = new MongoClient(_connectionDB.ConnectionString);
-            _mongoDB = client.GetDatabase(_connectionDB.Name);
+            _mongoDbContex = client.GetDatabase(_connectionDB.Name);
 
-        }
-
-        public IMongoDatabase GetMongo()
-        {
-            return _mongoDB;
         }
 
     }

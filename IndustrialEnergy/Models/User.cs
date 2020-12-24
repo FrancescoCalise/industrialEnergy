@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
 
 namespace IndustrialEnergy.Models
 {
@@ -14,13 +15,12 @@ namespace IndustrialEnergy.Models
         public string Role { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Token { get; set; }
 
     }
 
-    public class UserCollection : User
+    public class UsersCollection
     {
-       
+        public List<User> Users { get; set; }
     }
 }
 

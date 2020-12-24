@@ -1,0 +1,22 @@
+{
+  "Users": [
+    {
+      "Id": "5fe487046f4808dda8059a09",
+      "UserName": "admin",
+      "Password": "admin",
+      "Email": "test@test.it",
+      "Role": "Admin",
+      "FirstName": "test name",
+      "LastName": "test surname"
+    },
+    {
+      "Id": "5fe48756b0bbab6bfcb0785e",
+      "UserName": "society",
+      "Password": "123",
+      "Email": "test@test.it",
+      "Role": "User",
+      "FirstName": "society name",
+      "LastName": "society surname"
+    }
+  ]
+}
