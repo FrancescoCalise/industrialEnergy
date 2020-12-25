@@ -76,9 +76,9 @@ namespace IndustrialEnergy.Controllers
         private IActionResult AuthenticateUser(User login)
         {
             User user = _userService.GetUserByUsername(login.UserName);
-            IActionResult response = NotFound();
+            IActionResult response = Unauthorized("User/password is wrong");
 
-            if (!string.IsNullOrEmpty(user.Id))
+            if (user != null && !string.IsNullOrEmpty(user.Id))
             {
                 //check pass
                 //TODO add cryptography
@@ -86,11 +86,11 @@ namespace IndustrialEnergy.Controllers
                 if (isPasswordCorrect)
                 {
                     string tokenString = GenerateJSONWebToken(user);
-                    response = Ok(new { token = tokenString });
+                    response = Ok(tokenString);
                 }
                 else
                 {
-                    response = Unauthorized(new { Error = "Wrong Password" });
+                    response = Unauthorized("User/password is wrong");
                 }
 
             }

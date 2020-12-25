@@ -4,6 +4,8 @@ using IndustrialEnergy.MongoDB;
 using IndustrialEnergy.MongoDB.Collections;
 using IndustrialEnergy.MongoDB.Collections.Models;
 using IndustrialEnergy.Services;
+using IndustrialEnergy.UtilityClass.Spinner;
+using IndustrialEnergy.UtilityClass.Toast;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -62,6 +64,8 @@ namespace IndustrialEnergy
             services.AddScoped<MongoDBContext>();
             services.AddScoped<MockupService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ToastService>();
+            services.AddScoped<SpinnerService>();
 
         }
 

@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using IndustrialEnergy.Components;
 using IndustrialEnergy.Models;
+using IndustrialEnergy.UtilityClass.Toast;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -55,11 +56,11 @@ namespace IndustrialEnergy.Services
         public async Task<IRestResponse> Login(string username, string password)
         {
 
-            var response = _serviceComponent.ResponseJson(_navigationManager.BaseUri + "api/login?userId=" + username + "&pass=" + password + "", null, null, null, RestSharp.Method.GET);
+            var response = await _serviceComponent.ResponseJson(_navigationManager.BaseUri + "api/login?userId=" + username + "&pass=" + password + "", null, null, null, Method.GET, ToastModalityShow.OnlySuccess);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                Token = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content)["token"].ToString();
+                Token = JsonConvert.DeserializeObject<string>(response.Content);
                 await _localStore.SetItemAsync<string>("jwt", "Bearer " + Token);
             }
 
@@ -83,7 +84,7 @@ namespace IndustrialEnergy.Services
                 try
                 {
                     IPrincipal principal = tokenHandler.ValidateToken(Token, validationParameters, out validatedToken);
-                    if(validatedToken != null)
+                    if (validatedToken != null)
                     {
                         return true;
                     }
@@ -93,7 +94,7 @@ namespace IndustrialEnergy.Services
                     //TODO LOG ERROR
                     return false;
                 }
-                
+
             }
             return false;
         }
@@ -102,9 +103,9 @@ namespace IndustrialEnergy.Services
             return new TokenValidationParameters()
             {
                 ValidateIssuerSigningKey = true,
-                ValidateLifetime = true, 
-                ValidateAudience = true, 
-                ValidateIssuer = true,   
+                ValidateLifetime = true,
+                ValidateAudience = true,
+                ValidateIssuer = true,
                 ValidIssuer = _config["Jwt:Issuer"],
                 ValidAudience = _config["Jwt:Issuer"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]))
