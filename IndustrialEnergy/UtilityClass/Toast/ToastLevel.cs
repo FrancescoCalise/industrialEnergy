@@ -17,5 +17,6 @@ namespace IndustrialEnergy.UtilityClass.Toast
         All,
         OnlySuccess,
         OnlyError,
+        No
     }
 }

@@ -148,12 +148,15 @@ namespace IndustrialEnergy.Components
                 case HttpStatusCode.Conflict:
                     level = ToastLevel.Error;
                     break;
-                    //case HttpStatusCode.:
-                    //    level = ToastLevel.Info;
-                    //    break;
-                    //case HttpStatusCode.OK:
-                    //    level = ToastLevel.Warning;
-                    //    break;
+                //case HttpStatusCode.:
+                //    level = ToastLevel.Info;
+                //    break;
+                //case HttpStatusCode.OK:
+                //    level = ToastLevel.Warning;
+                //    break;
+                default:
+                    level = ToastLevel.Info;
+                    break;
             }
             return level;
         }
