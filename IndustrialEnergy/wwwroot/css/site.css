@@ -48,3 +48,19 @@ a, .btn-link {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+.spinner-container {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    z-index: 999;
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    background-color: rgba(0,0,0,0.5);
+}
+
+.spinner-center {
+    right: 50%;
+    top: 50%;
+    position: absolute;
+}
