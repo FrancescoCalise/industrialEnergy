@@ -21,7 +21,7 @@ namespace IndustrialEnergy.Services
         User User { get; }
         bool IsValidToken();
         Task Initialize();
-        Task<MessageResponse> Login(string username, string password);
+        Task<IRestResponse> Login(LoginUser login);
         Task Logout();
     }
 
@@ -53,14 +53,16 @@ namespace IndustrialEnergy.Services
             Token = await _localStore.GetItemAsync<string>("jwt");
         }
 
-        public async Task<MessageResponse> Login(string username, string password)
+        public async Task<IRestResponse> Login(LoginUser login)
         {
+            login.Password = SecurityService.Encrypt(login.Password);
 
-            var response = await _serviceComponent.ResponseJson(_navigationManager.BaseUri + "api/login?userId=" + username + "&pass=" + password + "", null, null, null, Method.GET, ToastModalityShow.OnlySuccess);
+            var response = await _serviceComponent.InvokeMiddlewareAsync("/Autenticate", "/Login", login, null, Method.POST, ToastModalityShow.OnlySuccess);
+            ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                Token = response.Content["Token"];
+                Token = responseContent.Content["Token"];
                 await _localStore.SetItemAsync<string>("jwt", "Bearer " + Token);
             }
 
@@ -98,6 +100,7 @@ namespace IndustrialEnergy.Services
             }
             return false;
         }
+
         private TokenValidationParameters GetValidationParameters()
         {
             return new TokenValidationParameters()

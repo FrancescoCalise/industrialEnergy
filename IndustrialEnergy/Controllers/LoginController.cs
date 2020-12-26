@@ -2,8 +2,6 @@
 using IndustrialEnergy.Models;
 using IndustrialEnergy.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -13,19 +11,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace IndustrialEnergy.Controllers
 {
     [Authorize]
-    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class AutenticateController : ControllerBase
     {
         private IConfiguration _config { get; set; }
         private IUserService _userService { get; set; }
 
-        public LoginController(
+        public AutenticateController(
             IConfiguration config,
             IUserService userService)
         {
@@ -34,15 +31,9 @@ namespace IndustrialEnergy.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Login(string userId = "", string pass = "")
+        [HttpPost]
+        public IActionResult Login([FromBody] LoginUser login)
         {
-            User login = new User()
-            {
-                UserName = userId,
-                Password = pass
-            };
-
             IActionResult response = AuthenticateUser(login);
 
             return response;
@@ -74,17 +65,16 @@ namespace IndustrialEnergy.Controllers
             return encodeToken;
         }
 
-        private IActionResult AuthenticateUser(User login)
+        private IActionResult AuthenticateUser(LoginUser login)
         {
-            User user = _userService.GetUserByUsername(login.UserName);
+            User user = _userService.GetUserByUsername(login.Username);
             //TODO IDML
-            MessageResponse messageResponse = new MessageResponse() { Message = "User/password is wrong"};
+            ResponseContent messageResponse = new ResponseContent() { Message = "User/password is wrong" };
             IActionResult response = Unauthorized(messageResponse);
 
             if (user != null && !string.IsNullOrEmpty(user.Id))
             {
-                //check pass
-                //TODO add cryptography
+
                 bool isPasswordCorrect = user.Password == login.Password;
                 if (isPasswordCorrect)
                 {
@@ -96,28 +86,13 @@ namespace IndustrialEnergy.Controllers
                     messageResponse.Message = "Login Ok";
                     response = Ok(messageResponse);
                 }
-                
+
 
             }
 
             return response;
         }
 
-        [Authorize]
-        [HttpPost]
-        public IActionResult Post([FromBody] string value)
-        {
-            try
-            {
-                return Ok(value);
-            }
-            catch (Exception)
-            {
-                return NotFound();
-            }
-        }
-
-        [Authorize]
         [HttpPost]
         public IActionResult Logout()
         {

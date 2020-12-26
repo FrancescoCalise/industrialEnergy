@@ -1,8 +1,6 @@
 ﻿@page "/Login"
-@using System.ComponentModel.DataAnnotations
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
-@inject ToastService toastService
 
 <div class="col-md-6 offset-md-3 mt-5">
     @if (NavigationManager.BaseUri.Contains("localhost"))
@@ -30,12 +28,10 @@
                     <ValidationMessage For="@(() => model.Password)" />
                 </div>
                 <button class="btn btn-primary">
-                    @*@if (loading)
-                    {
-                        <span class="spinner-border spinner-border-sm mr-1"></span>
-                    }*@
                     Login
                 </button>
+
+
                 @if (!string.IsNullOrEmpty(error))
                 {
                     <div class="alert alert-danger mt-3 mb-0">@error</div>
@@ -51,17 +47,10 @@
 
 
 @code{
-    private Model model = new Model();
+    private LoginUser model = new LoginUser();
     private string error;
 
-    private class Model
-    {
-        [Required]
-        public string Username { get; set; }
 
-        [Required]
-        public string Password { get; set; }
-    }
 
     protected override void OnInitialized()
     {
@@ -77,14 +66,16 @@
 
         try
         {
-            MessageResponse response = await AuthenticationService.Login(model.Username, model.Password);
+            IRestResponse response = await AuthenticationService.Login(model);
+            ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
+
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 NavigationManager.NavigateTo("");
             }
             else
             {
-                error = response.Message;
+                error = responseContent.Message;
                 StateHasChanged();
             }
         }
@@ -95,25 +86,10 @@
         }
     }
 
+    private void GoSignUp()
+    {
+        NavigationManager.NavigateTo("/SignUp");
+    }
 
-    //public async void PostMethod()
-    //{
-    //    Message = "";
-    //    string token = await localStore.GetItemAsync<string>("jwt");
-    //    Dictionary<string, string> header = new Dictionary<string, string>();
-    //    header.Add("Authorization", token);
-    //    var value = Guid.NewGuid().ToString();
 
-    //    var response = Service.ResponseJsonAuth("http://localhost:61171/api/login", value, header, RestSharp.Method.POST);
-
-    //    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-    //    {
-    //        Message = "Post Success:" + response.StatusCode.ToString();
-    //    }
-    //    else
-    //    {
-    //        Message = "Post Error:" + response.StatusCode.ToString();
-
-    //    }
-    //}
 }
