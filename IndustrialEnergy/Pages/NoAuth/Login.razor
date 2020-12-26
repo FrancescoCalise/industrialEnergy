@@ -77,14 +77,14 @@
 
         try
         {
-            IRestResponse response = await AuthenticationService.Login(model.Username, model.Password);
+            MessageResponse response = await AuthenticationService.Login(model.Username, model.Password);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 NavigationManager.NavigateTo("");
             }
             else
             {
-                error = response.Content;
+                error = response.Message;
                 StateHasChanged();
             }
         }

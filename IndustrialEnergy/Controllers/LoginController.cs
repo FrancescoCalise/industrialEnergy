@@ -1,4 +1,5 @@
-﻿using IndustrialEnergy.Models;
+﻿using IndustrialEnergy.Components;
+using IndustrialEnergy.Models;
 using IndustrialEnergy.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -76,7 +77,9 @@ namespace IndustrialEnergy.Controllers
         private IActionResult AuthenticateUser(User login)
         {
             User user = _userService.GetUserByUsername(login.UserName);
-            IActionResult response = Unauthorized("User/password is wrong");
+            //TODO IDML
+            MessageResponse messageResponse = new MessageResponse() { Message = "User/password is wrong"};
+            IActionResult response = Unauthorized(messageResponse);
 
             if (user != null && !string.IsNullOrEmpty(user.Id))
             {
@@ -86,12 +89,14 @@ namespace IndustrialEnergy.Controllers
                 if (isPasswordCorrect)
                 {
                     string tokenString = GenerateJSONWebToken(user);
-                    response = Ok(tokenString);
+                    var content = new Dictionary<string, string>();
+                    content.Add("Token", tokenString);
+                    messageResponse.Content = content;
+                    //TODO IDML
+                    messageResponse.Message = "Login Ok";
+                    response = Ok(messageResponse);
                 }
-                else
-                {
-                    response = Unauthorized("User/password is wrong");
-                }
+                
 
             }
 

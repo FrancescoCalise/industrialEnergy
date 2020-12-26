@@ -7,6 +7,7 @@ using RestSharp;
 using RestSharp.Serializers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace IndustrialEnergy.Components
 {
     public interface IServiceComponent
     {
-        Task<IRestResponse> ResponseJson(string url, object requestBody, Dictionary<string, string> requesteHeader, List<Parameter> requestParameter, Method method, ToastModalityShow toastShow);
+        Task<MessageResponse> ResponseJson(string url, object requestBody, Dictionary<string, string> requesteHeader, List<Parameter> requestParameter, Method method, ToastModalityShow toastShow);
         IRestResponse ResponseJsonAuth(string url, object requestBody, Dictionary<string, string> requesteHeader, Method method);
 
     }
@@ -31,7 +32,7 @@ namespace IndustrialEnergy.Components
             _toastService = toastService;
         }
 
-        public async Task<IRestResponse> ResponseJson(string url, object requestBody, Dictionary<string, string> requesteHeader, List<Parameter> requestParameter, Method method, ToastModalityShow toastShow)
+        public async Task<MessageResponse> ResponseJson(string url, object requestBody, Dictionary<string, string> requesteHeader, List<Parameter> requestParameter, Method method, ToastModalityShow toastShow)
         {
             _spinnerService.ShowSpinner();
 
@@ -65,14 +66,17 @@ namespace IndustrialEnergy.Components
             }
 
             IRestResponse response = await client.ExecuteAsync(request);
+            MessageResponse message = JsonConvert.DeserializeObject<MessageResponse>(response.Content);
+            message.StatusCode = response.StatusCode;
+           
             _spinnerService.HideSpinner();
 
             ToastLevel levelError = GetToastLevel(response.StatusCode);
 
             if (CanShowToast(levelError, toastShow))
-                _toastService.ShowToast(response.StatusCode.ToString(), response.Content, levelError);
+                _toastService.ShowToast(response.StatusCode.ToString(), message.Message, levelError);
 
-            return response;
+            return message;
         }
 
 
@@ -182,6 +186,12 @@ namespace IndustrialEnergy.Components
         }
     }
 
+    public class MessageResponse
+    {
+        public string Message { get; set; }
+        public Dictionary<string, string> Content { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
 
+    }
 
 }
