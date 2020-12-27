@@ -6,8 +6,9 @@
 
 <div class="col-md-6 offset-md-3 mt-5">
     <div class="card">
-        <h4 class="card-header">Login</h4>
+        <h4 class="card-header">Signup</h4>
         <div class="card-body">
+
             <EditForm Model="@model" OnValidSubmit="HandleValidSubmit">
                 <DataAnnotationsValidator />
                 <div class="form-group">
@@ -20,6 +21,22 @@
                     <InputText @bind-Value="model.Password" type="password" class="form-control" />
                     <ValidationMessage For="@(() => model.Password)" />
                 </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <InputText @bind-Value="model.Email" class="form-control" />
+                    <ValidationMessage For="@(() => model.Email)" />
+                </div>
+                <div class="form-group">
+                    <label>Firstname</label>
+                    <InputText @bind-Value="model.FirstName" class="form-control" />
+                    <ValidationMessage For="@(() => model.FirstName)" />
+                </div>
+                <div class="form-group">
+                    <label>Lastname</label>
+                    <InputText @bind-Value="model.LastName" class="form-control" />
+                    <ValidationMessage For="@(() => model.LastName)" />
+                </div>
+
                 <button class="btn btn-primary">
                     SignUp
                 </button>
@@ -49,9 +66,26 @@
 
     private async void HandleValidSubmit()
     {
+        try
+        {
+            IRestResponse response = await AuthenticationService.SignUp(model);
+            ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
-       
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+
+                error = responseContent.Message;
+                model.Password = string.Empty;
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            error = "";
+            StateHasChanged();
+        }
+
     }
 
-  
+
 }

@@ -31,6 +31,7 @@
                     Login
                 </button>
 
+                <p @onclick="@(() => GoToSignUp())"> If you don't have an account, click here</p>
 
                 @if (!string.IsNullOrEmpty(error))
                 {
@@ -41,9 +42,9 @@
     </div>
 </div>
 @*<button class="btn btn-info" @onclick="@(() => toastService.ShowToast("Info","I'm an INFO message", ToastLevel.Info))">Info Toast</button>
-<button class="btn btn-success" @onclick="@(() => toastService.ShowToast("Succes","I'm a SUCCESS message", ToastLevel.Success))">Success Toast</button>
-<button class="btn btn-warning" @onclick="@(() => toastService.ShowToast("Warning","I'm a WARNING message", ToastLevel.Warning))">Warning Toast</button>
-<button class="btn btn-danger" @onclick="@(() => toastService.ShowToast("Error","I'm an ERROR message", ToastLevel.Error))">Error Toast</button>*@
+    <button class="btn btn-success" @onclick="@(() => toastService.ShowToast("Succes","I'm a SUCCESS message", ToastLevel.Success))">Success Toast</button>
+    <button class="btn btn-warning" @onclick="@(() => toastService.ShowToast("Warning","I'm a WARNING message", ToastLevel.Warning))">Warning Toast</button>
+    <button class="btn btn-danger" @onclick="@(() => toastService.ShowToast("Error","I'm an ERROR message", ToastLevel.Error))">Error Toast</button>*@
 
 
 @code{
@@ -69,12 +70,9 @@
             IRestResponse response = await AuthenticationService.Login(model);
             ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                NavigationManager.NavigateTo("");
-            }
-            else
-            {
+
                 error = responseContent.Message;
                 StateHasChanged();
             }
@@ -86,7 +84,7 @@
         }
     }
 
-    private void GoSignUp()
+    private void GoToSignUp()
     {
         NavigationManager.NavigateTo("/SignUp");
     }

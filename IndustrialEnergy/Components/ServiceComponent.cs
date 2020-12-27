@@ -44,7 +44,7 @@ namespace IndustrialEnergy.Components
             var request = new RestRequest(resource, method, DataFormat.Json);
 
             request.JsonSerializer = new CamelCaseSerializer();
-           
+
 
             if (requesteHeader != null)
             {
@@ -133,7 +133,7 @@ namespace IndustrialEnergy.Components
         private bool CanShowToast(ToastLevel level, ToastModalityShow modalityShow)
         {
             bool canShow = false;
-  
+
             if (modalityShow == ToastModalityShow.All)
             {
                 canShow = true;
@@ -155,6 +155,21 @@ namespace IndustrialEnergy.Components
     {
         public string Message { get; set; }
         public Dictionary<string, string> Content { get; set; }
+
+        public ResponseContent()
+        {
+        }
+
+        public ResponseContent(string message)
+        {
+            Message = message;
+        }
+
+        public ResponseContent(string message, Dictionary<string, string> content)
+        {
+            Message = message;
+            Content = content;
+        }
     }
 
 }

@@ -9,8 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace IndustrialEnergy.Controllers
 {
@@ -28,15 +30,6 @@ namespace IndustrialEnergy.Controllers
         {
             _config = config;
             _userService = userService;
-        }
-
-        [AllowAnonymous]
-        [HttpPost]
-        public IActionResult Login([FromBody] LoginUser login)
-        {
-            IActionResult response = AuthenticateUser(login);
-
-            return response;
         }
 
         private string GenerateJSONWebToken(User user)
@@ -65,9 +58,9 @@ namespace IndustrialEnergy.Controllers
             return encodeToken;
         }
 
-        private IActionResult AuthenticateUser(LoginUser login)
+        private async Task<IActionResult> AuthenticateUser(LoginUser login)
         {
-            User user = _userService.GetUserByUsername(login.Username);
+            User user = await _userService.GetUserByUsername(login.Username);
             //TODO IDML
             ResponseContent messageResponse = new ResponseContent() { Message = "User/password is wrong" };
             IActionResult response = Unauthorized(messageResponse);
@@ -91,6 +84,22 @@ namespace IndustrialEnergy.Controllers
             }
 
             return response;
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] LoginUser login)
+        {
+            IActionResult response = await AuthenticateUser(login);
+
+            return response;
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> SignUp([FromBody] User user)
+        {
+            return await _userService.SaveUser(user);
         }
 
         [HttpPost]
