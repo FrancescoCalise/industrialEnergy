@@ -20,7 +20,6 @@ namespace IndustrialEnergy.Services
     {
         User User { get; }
         bool IsValidToken();
-        Task Initialize();
         Task<IRestResponse> Login(LoginUser login);
         Task<IRestResponse> SignUp(User user);
         Task Logout();
@@ -49,12 +48,14 @@ namespace IndustrialEnergy.Services
             _config = config;
         }
 
-        public async Task Initialize()
+        public  bool IsValidToken()
         {
-            Token = await _localStore.GetItemAsync<string>("jwt");
-        }
-        public bool IsValidToken()
-        {
+            if (string.IsNullOrEmpty(Token))
+            {
+                //Token = await _localStore.GetItemAsync<string>("jwt");
+                //User = await _localStore.GetItemAsync<string>("user");
+
+            }
             if (!string.IsNullOrEmpty(Token))
             {
                 JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
@@ -100,6 +101,8 @@ namespace IndustrialEnergy.Services
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 Token = responseContent.Content["Token"];
+                User = JsonConvert.DeserializeObject<User>(responseContent.Content["User"]);
+                await _localStore.SetItemAsync<User>("user", User);
                 await _localStore.SetItemAsync<string>("jwt", "Bearer " + Token);
                 _navigationManager.NavigateTo("");
             }
@@ -109,7 +112,7 @@ namespace IndustrialEnergy.Services
 
         public async Task Logout()
         {
-            User = null;
+            Token = null;
             await _localStore.RemoveItemAsync("Token");
             _navigationManager.NavigateTo("login");
         }

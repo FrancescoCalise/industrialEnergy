@@ -9,11 +9,10 @@
     </div>
 
     <div class="main">
-        @if (AuthenticationService.IsValidToken())
-        {
-            <TopMenu />
-        }
-        <div class="content px-4">
+
+        <TopNavBar />
+
+        <div>
             @Body
         </div>
     </div>

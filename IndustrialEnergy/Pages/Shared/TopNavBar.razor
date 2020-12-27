@@ -1,0 +1,69 @@
+﻿@inherits LayoutComponentBase
+@inject IAuthenticationService AuthenticationService
+<!-- Topbar -->
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+    <!-- Sidebar Toggle (Topbar) -->
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Topbar Navbar -->
+    <ul class="navbar-nav ml-auto">
+
+        <div class="topbar-divider d-none d-sm-block"></div>
+        @if (AuthenticationService.IsValidToken())
+        {
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+                <NavLink class="nav-link dropdown-toggle" href="" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-black-100 small">@AuthenticationService.User.FirstName @AuthenticationService.User.LastName </span>
+                    <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                </NavLink>
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                    <NavLink class="nav-link dropdown-item" href="profile">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-black-100"></i>
+                        Profile
+                    </NavLink>
+                    <div class="dropdown-divider"></div>
+                    <NavLink class="nav-link dropdown-item" href="logout">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-black-100"></i>
+                        Logout
+                    </NavLink>
+                </div>
+            </li>
+        }
+        else
+        {
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+                <NavLink class="nav-link dropdown-toggle" href="" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-black-100 small">Not Autenticate</span>
+                    <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                </NavLink>
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                    <NavLink class="nav-link dropdown-item" href="login" Match="NavLinkMatch.All">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-black-100"></i>Login
+                    </NavLink>
+                    <div class="dropdown-divider"></div>
+                    <NavLink class="nav-link dropdown-item" href="signUp">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-black-100"></i>Signup
+                    </NavLink>
+                    <div class="dropdown-divider"></div>
+                    <NavLink class="nav-link dropdown-item" href="changePassword">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-black-100"></i> Change Password
+                    </NavLink>
+                </div>
+            </li>
+        }
+
+    </ul>
+
+</nav>
+<!-- End of Topbar -->
+
+@code
+{
+} 
