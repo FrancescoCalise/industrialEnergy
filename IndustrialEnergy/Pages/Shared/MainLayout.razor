@@ -1,13 +1,10 @@
 ﻿@inherits LayoutComponentBase
 @inject IAuthenticationService AuthenticationService
-
+@using IndustrialEnergy.Pages.Shared.Spinner
+@using IndustrialEnergy.Pages.Shared.Toast
 <div class="page">
     <Spinner />
     <Toast />
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
     <div class="main">
 
         <TopNavBar />

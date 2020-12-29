@@ -2,7 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using System.Collections.Generic;
 
-namespace IndustrialEnergy.UtilityClass
+namespace IndustrialEnergy.Utility
 {
     public class Role
     {

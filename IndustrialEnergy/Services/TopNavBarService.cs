@@ -6,7 +6,7 @@ using System.Timers;
 
 namespace IndustrialEnergy.Services
 {
-    public class TopMenuService
+    public class MenuService
     {
         public event Action OnShow;
         public event Action OnHide;

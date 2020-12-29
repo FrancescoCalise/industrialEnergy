@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace IndustrialEnergy.Pages.Shared
 {
-    public class TopMenuBase : ComponentBase
+    public class MenuBase : ComponentBase
     {
-        [Inject] private TopMenuService menuService { get; set; }
+        [Inject] private MenuService menuService { get; set; }
 
         protected bool IsAutorized { get; set; }
         protected override void OnInitialized()

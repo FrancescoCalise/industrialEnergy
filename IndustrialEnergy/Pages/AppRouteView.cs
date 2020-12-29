@@ -21,7 +21,7 @@ namespace IndustrialEnergy.AppRouteAuth
         {
 
             var authorize = Attribute.GetCustomAttribute(RouteData.PageType, typeof(AuthorizeAttribute)) != null;
-            AuthenticationService.CheckToken(authorize);
+            AuthenticationService.CheckToken(authorize, RouteData.PageType);
             base.Render(builder);
 
         }

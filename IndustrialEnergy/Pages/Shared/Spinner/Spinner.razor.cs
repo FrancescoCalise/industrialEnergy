@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace IndustrialEnergy.UtilityClass.Spinner
+namespace IndustrialEnergy.Pages.Shared
 {
     public class SpinnerBase : ComponentBase
     {

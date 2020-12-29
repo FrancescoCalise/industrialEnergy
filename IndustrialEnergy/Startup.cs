@@ -1,28 +1,17 @@
 using Blazored.LocalStorage;
 using IndustrialEnergy.Components;
 using IndustrialEnergy.MongoDB;
-using IndustrialEnergy.MongoDB.Collections;
-using IndustrialEnergy.MongoDB.Collections.Models;
-using IndustrialEnergy.Pages.Shared;
 using IndustrialEnergy.Services;
-using IndustrialEnergy.UtilityClass.Spinner;
-using IndustrialEnergy.UtilityClass.Toast;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace IndustrialEnergy
 {
@@ -65,7 +54,7 @@ namespace IndustrialEnergy
             services.AddScoped<MongoDBContext>();
             services.AddScoped<MockupService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<TopMenuService>();
+            services.AddScoped<MenuService>();
             services.AddScoped<ToastService>();
             services.AddScoped<SpinnerService>();
 

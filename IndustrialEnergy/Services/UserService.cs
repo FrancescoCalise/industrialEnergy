@@ -1,8 +1,7 @@
 ﻿using IndustrialEnergy.Components;
 using IndustrialEnergy.Models;
 using IndustrialEnergy.MongoDB;
-using IndustrialEnergy.UtilityClass;
-using Microsoft.AspNetCore.Components;
+using IndustrialEnergy.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;

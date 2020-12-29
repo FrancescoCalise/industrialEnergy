@@ -51,12 +51,16 @@
     private LoginUser model = new LoginUser();
     private string error;
 
-
-    private bool IsValidToken = false;
+    protected override void OnInitialized()
+    {
+        if (AuthenticationService.User != null)
+        {
+            NavigationManager.NavigateTo("");
+        }
+    }
 
     private async void HandleValidSubmit()
     {
-
         try
         {
             IRestResponse response = await AuthenticationService.Login(model);
