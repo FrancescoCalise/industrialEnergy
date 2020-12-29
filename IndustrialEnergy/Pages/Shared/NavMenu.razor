@@ -1,25 +1,32 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@inherits MenuBase
+@inject IAuthenticationService AuthenticationService
+
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">IndustrialEnergy</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="login">
-                <span class="oi oi-plus" aria-hidden="true"></span> Login
-            </NavLink>
-        </li>
-    </ul>
-</div>
-
+@if (IsAutorized)
+{
+    <h2>TEST</h2>
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <ul class="nav flex-column">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="Society" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Society
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="Impianto" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Impianto
+                </NavLink>
+            </li>
+        </ul>
+    </div>
+}
 @code {
     private bool collapseNavMenu = true;
 
@@ -29,4 +36,5 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
 }

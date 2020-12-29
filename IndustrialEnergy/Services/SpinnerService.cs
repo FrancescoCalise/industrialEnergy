@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace IndustrialEnergy.UtilityClass.Spinner
+namespace IndustrialEnergy.Services
 {
     public class SpinnerService 
     {

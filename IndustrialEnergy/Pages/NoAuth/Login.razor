@@ -1,8 +1,6 @@
 ﻿@page "/Login"
-@using System.ComponentModel.DataAnnotations
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
-@inject ToastService toastService
 
 <div class="col-md-6 offset-md-3 mt-5">
     @if (NavigationManager.BaseUri.Contains("localhost"))
@@ -30,12 +28,11 @@
                     <ValidationMessage For="@(() => model.Password)" />
                 </div>
                 <button class="btn btn-primary">
-                    @*@if (loading)
-                    {
-                        <span class="spinner-border spinner-border-sm mr-1"></span>
-                    }*@
                     Login
                 </button>
+
+                <p @onclick="@(() => GoToSignUp())"> If you don't have an account, click here</p>
+
                 @if (!string.IsNullOrEmpty(error))
                 {
                     <div class="alert alert-danger mt-3 mb-0">@error</div>
@@ -45,28 +42,18 @@
     </div>
 </div>
 @*<button class="btn btn-info" @onclick="@(() => toastService.ShowToast("Info","I'm an INFO message", ToastLevel.Info))">Info Toast</button>
-<button class="btn btn-success" @onclick="@(() => toastService.ShowToast("Succes","I'm a SUCCESS message", ToastLevel.Success))">Success Toast</button>
-<button class="btn btn-warning" @onclick="@(() => toastService.ShowToast("Warning","I'm a WARNING message", ToastLevel.Warning))">Warning Toast</button>
-<button class="btn btn-danger" @onclick="@(() => toastService.ShowToast("Error","I'm an ERROR message", ToastLevel.Error))">Error Toast</button>*@
+    <button class="btn btn-success" @onclick="@(() => toastService.ShowToast("Succes","I'm a SUCCESS message", ToastLevel.Success))">Success Toast</button>
+    <button class="btn btn-warning" @onclick="@(() => toastService.ShowToast("Warning","I'm a WARNING message", ToastLevel.Warning))">Warning Toast</button>
+    <button class="btn btn-danger" @onclick="@(() => toastService.ShowToast("Error","I'm an ERROR message", ToastLevel.Error))">Error Toast</button>*@
 
 
 @code{
-    private Model model = new Model();
+    private LoginUser model = new LoginUser();
     private string error;
-
-    private class Model
-    {
-        [Required]
-        public string Username { get; set; }
-
-        [Required]
-        public string Password { get; set; }
-    }
 
     protected override void OnInitialized()
     {
-        // redirect to home if already logged in
-        if (AuthenticationService.IsValidToken())
+        if (AuthenticationService.User != null)
         {
             NavigationManager.NavigateTo("");
         }
@@ -74,17 +61,15 @@
 
     private async void HandleValidSubmit()
     {
-
         try
         {
-            MessageResponse response = await AuthenticationService.Login(model.Username, model.Password);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            IRestResponse response = await AuthenticationService.Login(model);
+            ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                NavigationManager.NavigateTo("");
-            }
-            else
-            {
-                error = response.Message;
+
+                error = responseContent.Message;
                 StateHasChanged();
             }
         }
@@ -95,25 +80,10 @@
         }
     }
 
+    private void GoToSignUp()
+    {
+        NavigationManager.NavigateTo("/SignUp");
+    }
 
-    //public async void PostMethod()
-    //{
-    //    Message = "";
-    //    string token = await localStore.GetItemAsync<string>("jwt");
-    //    Dictionary<string, string> header = new Dictionary<string, string>();
-    //    header.Add("Authorization", token);
-    //    var value = Guid.NewGuid().ToString();
 
-    //    var response = Service.ResponseJsonAuth("http://localhost:61171/api/login", value, header, RestSharp.Method.POST);
-
-    //    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-    //    {
-    //        Message = "Post Success:" + response.StatusCode.ToString();
-    //    }
-    //    else
-    //    {
-    //        Message = "Post Error:" + response.StatusCode.ToString();
-
-    //    }
-    //}
 }

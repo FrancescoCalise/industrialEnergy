@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using IndustrialEnergy.Services;
+using IndustrialEnergy.Utility;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace IndustrialEnergy.UtilityClass.Toast
+namespace IndustrialEnergy.Pages.Shared
 {
     public class ToastBase : ComponentBase, IDisposable
     {

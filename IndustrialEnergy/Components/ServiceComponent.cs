@@ -1,13 +1,12 @@
-﻿using IndustrialEnergy.UtilityClass.Spinner;
-using IndustrialEnergy.UtilityClass.Toast;
-using Microsoft.AspNetCore.Mvc;
+﻿using IndustrialEnergy.Services;
+using IndustrialEnergy.Utility;
+using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RestSharp;
 using RestSharp.Serializers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -16,47 +15,40 @@ namespace IndustrialEnergy.Components
 {
     public interface IServiceComponent
     {
-        Task<MessageResponse> ResponseJson(string url, object requestBody, Dictionary<string, string> requesteHeader, List<Parameter> requestParameter, Method method, ToastModalityShow toastShow);
-        IRestResponse ResponseJsonAuth(string url, object requestBody, Dictionary<string, string> requesteHeader, Method method);
-
+        Task<IRestResponse> InvokeMiddlewareAsync(string controller, string action, object requestBody, Dictionary<string, string> requesteHeader, Method method, ToastModalityShow toastShow);
     }
 
     public class ServiceComponent : IServiceComponent
     {
         private readonly SpinnerService _spinnerService;
         private readonly ToastService _toastService;
+        private readonly NavigationManager _navigationManager;
+        private string uri = string.Empty;
 
-        public ServiceComponent(SpinnerService spinnerService, ToastService toastService)
+        public ServiceComponent(SpinnerService spinnerService, ToastService toastService, NavigationManager navigationManager)
         {
             _spinnerService = spinnerService;
             _toastService = toastService;
+            _navigationManager = navigationManager;
+            uri = _navigationManager.BaseUri + "api";
         }
 
-        public async Task<MessageResponse> ResponseJson(string url, object requestBody, Dictionary<string, string> requesteHeader, List<Parameter> requestParameter, Method method, ToastModalityShow toastShow)
+        public async Task<IRestResponse> InvokeMiddlewareAsync(string controller, string action, object requestBody, Dictionary<string, string> requesteHeader, Method method, ToastModalityShow toastShow)
         {
             _spinnerService.ShowSpinner();
+            string resource = uri + controller + action;
+            RestClient client = new RestClient();
 
-            var client = new RestClient(url);
+            var request = new RestRequest(resource, method, DataFormat.Json);
 
-            var request = new RestRequest(method)
-            {
-                RequestFormat = DataFormat.Json,
-                JsonSerializer = new CamelCaseSerializer(),
-            };
+            request.JsonSerializer = new CamelCaseSerializer();
+
 
             if (requesteHeader != null)
             {
                 foreach (var item in requesteHeader)
                 {
                     request.AddHeader(item.Key, item.Value);
-                }
-            }
-
-            if (requestParameter != null)
-            {
-                foreach (var item in requestParameter)
-                {
-                    request.AddParameter(item);
                 }
             }
 
@@ -66,44 +58,15 @@ namespace IndustrialEnergy.Components
             }
 
             IRestResponse response = await client.ExecuteAsync(request);
-            MessageResponse message = JsonConvert.DeserializeObject<MessageResponse>(response.Content);
-            message.StatusCode = response.StatusCode;
-           
+
+            ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
+
             _spinnerService.HideSpinner();
 
             ToastLevel levelError = GetToastLevel(response.StatusCode);
 
             if (CanShowToast(levelError, toastShow))
-                _toastService.ShowToast(response.StatusCode.ToString(), message.Message, levelError);
-
-            return message;
-        }
-
-
-        public IRestResponse ResponseJsonAuth(string url, object requestBody, Dictionary<string, string> requesteHeader, Method method)
-        {
-            var client = new RestClient(url);
-
-            var request = new RestRequest(method)
-            {
-                RequestFormat = DataFormat.Json,
-                JsonSerializer = new CamelCaseSerializer()
-            };
-
-            if (requesteHeader != null)
-            {
-                foreach (var item in requesteHeader)
-                {
-                    request.AddHeader(item.Key, item.Value);
-                }
-            }
-
-            if (requestBody != null)
-            {
-                request.AddJsonBody(requestBody);
-            }
-
-            IRestResponse response = client.Execute(request);
+                _toastService.ShowToast(response.StatusCode.ToString(), responseContent.Message, levelError);
 
             return response;
         }
@@ -186,12 +149,25 @@ namespace IndustrialEnergy.Components
         }
     }
 
-    public class MessageResponse
+    public class ResponseContent
     {
         public string Message { get; set; }
         public Dictionary<string, string> Content { get; set; }
-        public HttpStatusCode StatusCode { get; set; }
 
+        public ResponseContent()
+        {
+        }
+
+        public ResponseContent(string message)
+        {
+            Message = message;
+        }
+
+        public ResponseContent(string message, Dictionary<string, string> content)
+        {
+            Message = message;
+            Content = content;
+        }
     }
 
 }

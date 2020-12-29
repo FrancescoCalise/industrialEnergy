@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using IndustrialEnergy.Utility;
+using System;
 using System.Linq;
 using System.Timers;
 
-namespace IndustrialEnergy.UtilityClass.Toast
+namespace IndustrialEnergy.Services
 {
     public class ToastService : IDisposable
     {
