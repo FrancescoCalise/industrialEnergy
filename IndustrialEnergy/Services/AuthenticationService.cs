@@ -1,6 +1,8 @@
 using Blazored.LocalStorage;
 using IndustrialEnergy.Components;
 using IndustrialEnergy.Models;
+using IndustrialEnergy.Pages.Shared;
+using IndustrialEnergy.UtilityClass;
 using IndustrialEnergy.UtilityClass.Spinner;
 using IndustrialEnergy.UtilityClass.Toast;
 using Microsoft.AspNetCore.Components;
@@ -35,6 +37,7 @@ namespace IndustrialEnergy.Services
         private ILocalStorageService _localStore;
         private IConfiguration _config;
         private ToastService _toastService;
+        private TopMenuService _topNavBarService;
 
         public User User { get; private set; }
         public string Token { get; private set; }
@@ -44,7 +47,8 @@ namespace IndustrialEnergy.Services
             ILocalStorageService localStore,
             IServiceComponent serviceComponent,
             IConfiguration config,
-            ToastService toastService
+            ToastService toastService,
+            TopMenuService topNavBarService
         )
         {
             _navigationManager = navigationManager;
@@ -52,7 +56,9 @@ namespace IndustrialEnergy.Services
             _localStore = localStore;
             _config = config;
             _toastService = toastService;
+            _topNavBarService = topNavBarService;
         }
+
         public async Task Initialize()
         {
             Token = await _localStore.GetItemAsync<string>("jwt");
@@ -83,8 +89,9 @@ namespace IndustrialEnergy.Services
                         if (validatedToken == null)
                         {
                             _navigationManager.NavigateTo("login");
+                            _topNavBarService.HideAutorize();
                         }
-                        IsValidToken = true;
+                        _topNavBarService.ShowAutorize();
                     }
                     catch (Exception ex)
                     {
@@ -94,10 +101,21 @@ namespace IndustrialEnergy.Services
                         User = null;
                         _toastService.ShowToast(HttpStatusCode.Unauthorized.ToString(), "Invalid Token", ToastLevel.Error);
                         //TODO LOG ERROR
+                        _topNavBarService.HideAutorize();
                         _navigationManager.NavigateTo("login");
                     }
                 }
+                else
+                {
+                    _topNavBarService.HideAutorize();
+                    _navigationManager.NavigateTo("login");
+                }
             }
+            else
+            {
+                _topNavBarService.HideAutorize();
+            }
+
         }
         private TokenValidationParameters GetValidationParameters()
         {

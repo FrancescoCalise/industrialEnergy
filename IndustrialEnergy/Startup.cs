@@ -3,6 +3,7 @@ using IndustrialEnergy.Components;
 using IndustrialEnergy.MongoDB;
 using IndustrialEnergy.MongoDB.Collections;
 using IndustrialEnergy.MongoDB.Collections.Models;
+using IndustrialEnergy.Pages.Shared;
 using IndustrialEnergy.Services;
 using IndustrialEnergy.UtilityClass.Spinner;
 using IndustrialEnergy.UtilityClass.Toast;
@@ -64,6 +65,7 @@ namespace IndustrialEnergy
             services.AddScoped<MongoDBContext>();
             services.AddScoped<MockupService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<TopMenuService>();
             services.AddScoped<ToastService>();
             services.AddScoped<SpinnerService>();
 

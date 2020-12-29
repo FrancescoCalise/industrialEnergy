@@ -154,14 +154,12 @@ namespace IndustrialEnergy.Services
                         //TODO IDML
                         message = new ResponseContent("User alredy exist");
                         result = BadRequest(message);
-
                     }
                 }
                 catch (Exception ex)
                 {
                     message.Message = ex.Message;
                     result = BadRequest(message);
-
                 }
             }
 
