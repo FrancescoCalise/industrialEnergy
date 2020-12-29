@@ -55,14 +55,15 @@
     private User model = new User();
     private string error;
 
-    protected override void OnInitialized()
-    {
-        // redirect to home if already logged in
-        if (AuthenticationService.IsValidToken())
-        {
-            NavigationManager.NavigateTo("");
-        }
-    }
+    private bool IsValidToken = false;
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    IsValidToken = await AuthenticationService.IsValidToken();
+    //    if (IsValidToken)
+    //    {
+    //        NavigationManager.NavigateTo("");
+    //    }
+    //}
 
     private async void HandleValidSubmit()
     {

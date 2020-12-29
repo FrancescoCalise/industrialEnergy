@@ -1,9 +1,11 @@
+using IndustrialEnergy.Models;
 using IndustrialEnergy.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace IndustrialEnergy.AppRouteAuth
 {
@@ -17,15 +19,11 @@ namespace IndustrialEnergy.AppRouteAuth
 
         protected override void Render(RenderTreeBuilder builder)
         {
+
             var authorize = Attribute.GetCustomAttribute(RouteData.PageType, typeof(AuthorizeAttribute)) != null;
-            if (authorize && !AuthenticationService.IsValidToken())
-            {
-                NavigationManager.NavigateTo(NavigationManager.BaseUri + "login");
-            }
-            else
-            {
-                base.Render(builder);
-            }
+            AuthenticationService.CheckToken(authorize);
+            base.Render(builder);
+
         }
     }
 }

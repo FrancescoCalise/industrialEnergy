@@ -52,15 +52,7 @@
     private string error;
 
 
-
-    protected override void OnInitialized()
-    {
-        // redirect to home if already logged in
-        if (AuthenticationService.IsValidToken())
-        {
-            NavigationManager.NavigateTo("");
-        }
-    }
+    private bool IsValidToken = false;
 
     private async void HandleValidSubmit()
     {

@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@inject IAuthenticationService AuthenticationService
 
 
 <div class="top-row pl-4 navbar navbar-dark">
@@ -9,7 +8,7 @@
     </button>
 </div>
 
-@if (AuthenticationService.IsValidToken())
+@if (IsValidToken)
 {
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
         <ul class="nav flex-column">
@@ -25,9 +24,15 @@
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
+    private bool IsValidToken = false;
+    private User user;
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+        IsValidToken = false;
     }
 }
