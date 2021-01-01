@@ -1,6 +1,7 @@
 ﻿using IndustrialEnergy.Components;
 using IndustrialEnergy.Models;
 using IndustrialEnergy.Services;
+using IndustrialEnergy.ServicesData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -22,12 +23,12 @@ namespace IndustrialEnergy.Controllers
     [ApiController]
     public class SocietyController : ControllerBase
     {
-        private ISocietyService _societyService { get; set; }
+        private ISocietyServiceData _societyServiceData { get; set; }
 
         public SocietyController(
-            ISocietyService societyService)
+            ISocietyServiceData societyService)
         {
-            _societyService = societyService;
+            _societyServiceData = societyService;
         }
 
         [HttpGet]
@@ -36,7 +37,7 @@ namespace IndustrialEnergy.Controllers
             //TODO IDML
             ResponseContent messageResponse = new ResponseContent() { Message = "Imposibile to get all societies" };
             IActionResult response = Unauthorized(messageResponse);
-            var societies = await _societyService.GetAllSocietiesByUser();
+            var societies = await _societyServiceData.GetAllSocietiesByUser();
 
             if (societies != null)
             {
@@ -54,7 +55,7 @@ namespace IndustrialEnergy.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveSociety([FromBody] Society society)
         {
-            return await _societyService.SaveSociety(society);
+            return await _societyServiceData.SaveSociety(society);
         }
 
     }

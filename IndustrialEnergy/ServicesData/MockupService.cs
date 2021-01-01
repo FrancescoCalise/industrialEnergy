@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IndustrialEnergy.Services
+namespace IndustrialEnergy.ServicesData
 {
 
-    public class MockupService 
+    public class MockupServiceData 
     {        
         public bool IsMockupEnabled { get; private set; }
       
-        public MockupService(IConfiguration config)
+        public MockupServiceData(IConfiguration config)
         {
             IsMockupEnabled = config["UseMockup"] == "true";
         }

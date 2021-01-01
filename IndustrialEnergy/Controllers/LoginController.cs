@@ -1,6 +1,7 @@
 ﻿using IndustrialEnergy.Components;
 using IndustrialEnergy.Models;
 using IndustrialEnergy.Services;
+using IndustrialEnergy.ServicesData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -23,11 +24,11 @@ namespace IndustrialEnergy.Controllers
     public class AutenticateController : ControllerBase
     {
         private IConfiguration _config { get; set; }
-        private IUserService _userService { get; set; }
+        private IUserServiceData _userService { get; set; }
 
         public AutenticateController(
             IConfiguration config,
-            IUserService userService)
+            IUserServiceData userService)
         {
             _config = config;
             _userService = userService;

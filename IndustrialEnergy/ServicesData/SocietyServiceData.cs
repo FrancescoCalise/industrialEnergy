@@ -1,7 +1,6 @@
 ﻿using IndustrialEnergy.Components;
 using IndustrialEnergy.Models;
 using IndustrialEnergy.MongoDB;
-using IndustrialEnergy.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
@@ -13,25 +12,25 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace IndustrialEnergy.Services
+namespace IndustrialEnergy.ServicesData
 {
 
-    public interface ISocietyService
+    public interface ISocietyServiceData
     {
         Task<List<Society>> GetAllSocietiesByUser();
         Task<IActionResult> SaveSociety(Society society);
     }
 
-    public class SocietyService : ControllerBase, ISocietyService
+    public class SocietyServiceData : ControllerBase, ISocietyServiceData
     {
         private IMongoDatabase _mongoDBContex { get; set; }
         private bool isMockEnabled { get; set; }
         private const string pathFileMockup = "MongoDB/Mockup/societiesCollection.json";
         private string collectionName = "Societies";
 
-        public SocietyService(
+        public SocietyServiceData(
             MongoDBContext mongoDBContex,
-            MockupService mockupService
+            MockupServiceData mockupService
             )
         {
             _mongoDBContex = mongoDBContex._mongoDbContex;

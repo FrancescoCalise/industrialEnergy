@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IndustrialEnergy.Pages.Shared
+namespace IndustrialEnergy.Components
 {
-    public class MenuBase : ComponentBase
+    public class MenuComponent : ComponentBase
     {
         [Inject] private MenuService menuService { get; set; }
 

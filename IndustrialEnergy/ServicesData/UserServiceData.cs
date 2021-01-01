@@ -13,17 +13,17 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace IndustrialEnergy.Services
+namespace IndustrialEnergy.ServicesData
 {
 
-    public interface IUserService
+    public interface IUserServiceData
     {
         Task<List<User>> GetAllUser();
         Task<User> GetUserByUsername(string username);
         Task<IActionResult> SaveUser(User user);
     }
 
-    public class UserService : ControllerBase, IUserService
+    public class UserServiceData : ControllerBase, IUserServiceData
     {
         //private NavigationManager _navigationManager { get; set; }
         private IConfiguration _configuration { get; set; }
@@ -32,11 +32,11 @@ namespace IndustrialEnergy.Services
         private const string pathFileMockup = "MongoDB/Mockup/userCollection.json";
         private string collectionName = "Users";
 
-        public UserService(
+        public UserServiceData(
             //NavigationManager navigationManager,
             IConfiguration configuration,
             MongoDBContext mongoDBContex,
-            MockupService mockupService)
+            MockupServiceData mockupService)
         {
             _configuration = configuration;
             _mongoDBContex = mongoDBContex._mongoDbContex;

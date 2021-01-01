@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace IndustrialEnergy.Pages.Shared
+namespace IndustrialEnergy.Components
 {
-    public class SpinnerBase : ComponentBase
+    public class SpinnerComponenet : ComponentBase
     {
         [Inject] private SpinnerService spinnerService { get; set; }
 

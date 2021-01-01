@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace IndustrialEnergy.Pages.Auth
 {
-    public class SocietyBase : ComponentBase
+    public class SocietyComponentBase : ComponentBase
     {
         [Inject] private ISystemComponent _system { get; set; }
         public List<Society> Societies { get; set; }

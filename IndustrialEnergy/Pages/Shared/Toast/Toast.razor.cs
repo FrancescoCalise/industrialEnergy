@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace IndustrialEnergy.Pages.Shared
+namespace IndustrialEnergy.Components
 {
-    public class ToastBase : ComponentBase, IDisposable
+    public class ToastComponent : ComponentBase, IDisposable
     {
         [Inject] private ToastService ToastService { get; set; }
 
