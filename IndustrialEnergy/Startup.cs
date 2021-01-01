@@ -4,6 +4,7 @@ using IndustrialEnergy.MongoDB;
 using IndustrialEnergy.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,7 @@ namespace IndustrialEnergy
 
             Debug.WriteLine($"Environment: {_webHostEnvironment.EnvironmentName}");
         }
-            
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
@@ -40,7 +41,7 @@ namespace IndustrialEnergy
                     option.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidateAudience =true,
+                        ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = _configuration["Jwt:Issuer"],
@@ -51,9 +52,11 @@ namespace IndustrialEnergy
             services.AddScoped<ILocalStorageService, LocalStorageService>();
             services.AddScoped<IServiceComponent, ServiceComponent>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<ISystemComponent, SystemComponent>();
             services.AddScoped<MongoDBContext>();
             services.AddScoped<MockupService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ISocietyService, SocietyService>();
             services.AddScoped<MenuService>();
             services.AddScoped<ToastService>();
             services.AddScoped<SpinnerService>();
@@ -66,7 +69,7 @@ namespace IndustrialEnergy
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();   
+                app.UseDeveloperExceptionPage();
             }
             else
             {
@@ -81,7 +84,7 @@ namespace IndustrialEnergy
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();

@@ -1,4 +1,5 @@
 ﻿@page "/Society"
+@inherits SocietyBase
 @attribute [Authorize]
 
 <div class="card mt-4">
@@ -7,4 +8,8 @@
 
 @code {
 
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAllCurrentSociety();
+    }
 }

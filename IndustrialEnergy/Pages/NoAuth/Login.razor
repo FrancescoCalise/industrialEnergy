@@ -1,9 +1,9 @@
 ﻿@page "/Login"
-@inject IAuthenticationService AuthenticationService
-@inject NavigationManager NavigationManager
+
+@inject IAuthenticationService AutenticationService
 
 <div class="col-md-6 offset-md-3 mt-5">
-    @if (NavigationManager.BaseUri.Contains("localhost"))
+    @if (System.NavigationManager.BaseUri.Contains("localhost"))
     {
         <div class="alert alert-info">
             Develop Info <br />
@@ -53,9 +53,9 @@
 
     protected override void OnInitialized()
     {
-        if (AuthenticationService.User != null)
+        if (System.User != null)
         {
-            NavigationManager.NavigateTo("");
+            System.NavigationManager.NavigateTo("");
         }
     }
 
@@ -63,10 +63,10 @@
     {
         try
         {
-            IRestResponse response = await AuthenticationService.Login(model);
+            IRestResponse response = await AutenticationService.Login(model);
             ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
 
                 error = responseContent.Message;
@@ -82,7 +82,7 @@
 
     private void GoToSignUp()
     {
-        NavigationManager.NavigateTo("/SignUp");
+        System.NavigationManager.NavigateTo("/SignUp");
     }
 
 

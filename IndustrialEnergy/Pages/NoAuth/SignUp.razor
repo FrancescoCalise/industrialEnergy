@@ -1,8 +1,5 @@
 ﻿@page "/SignUp"
-@using System.ComponentModel.DataAnnotations
 @inject IAuthenticationService AuthenticationService
-@inject NavigationManager NavigationManager
-@inject ToastService toastService
 
 <div class="col-md-6 offset-md-3 mt-5">
     <div class="card">
@@ -55,15 +52,13 @@
     private User model = new User();
     private string error;
 
-    private bool IsValidToken = false;
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    IsValidToken = await AuthenticationService.IsValidToken();
-    //    if (IsValidToken)
-    //    {
-    //        NavigationManager.NavigateTo("");
-    //    }
-    //}
+    protected override void OnInitialized()
+    {
+        if (System.User != null)
+        {
+            System.NavigationManager.NavigateTo("");
+        }
+    }
 
     private async void HandleValidSubmit()
     {
@@ -72,7 +67,7 @@
             IRestResponse response = await AuthenticationService.SignUp(model);
             ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
 
                 error = responseContent.Message;
