@@ -51,7 +51,6 @@ namespace IndustrialEnergy
                     };
                 });
             services.AddScoped<ILocalStorageService, LocalStorageService>();
-            services.AddScoped<IServiceComponent, ServiceComponent>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ISystemComponent, SystemComponent>();
             services.AddScoped<MongoDBContext>();

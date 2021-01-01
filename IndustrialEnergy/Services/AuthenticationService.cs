@@ -18,7 +18,9 @@ namespace IndustrialEnergy.Services
 {
     public interface IAuthenticationService
     {
-        Task CheckToken(bool authorize, Type pageType);
+        //Task CheckToken(bool authorize, Type pageType);
+        Task CheckIfTokenIsValid();
+        Task Initialize();
         Task<IRestResponse> Login(LoginUser login);
         Task<IRestResponse> SignUp(User user);
         Task Logout();
@@ -27,6 +29,7 @@ namespace IndustrialEnergy.Services
     public class AuthenticationService : ComponentBase, IAuthenticationService
     {
         private ISystemComponent _system { get; set; }
+
         public AuthenticationService(ISystemComponent system)
         {
             _system = system;
@@ -37,8 +40,10 @@ namespace IndustrialEnergy.Services
             _system.Token = await _system.LocalStore.GetItemAsync<string>("jwt");
             _system.User = await _system.LocalStore.GetItemAsync<User>("user");
         }
-        private async Task<bool> IsValidToken()
+
+        public async Task CheckIfTokenIsValid()
         {
+            _system.IsValidToken = false;
             bool conteinsKey = await _system.LocalStore.ContainKeyAsync("jwt");
             if (string.IsNullOrEmpty(_system.Token) && conteinsKey)
             {
@@ -56,7 +61,8 @@ namespace IndustrialEnergy.Services
                     IPrincipal principal = tokenHandler.ValidateToken(converToken, validationParameters, out validatedToken);
                     if (validatedToken != null)
                     {
-                        return true;
+                        _system.IsValidToken = true;
+                        _system.MenuService.ShowAutorize();
                     }
                 }
                 catch (Exception ex)
@@ -65,30 +71,12 @@ namespace IndustrialEnergy.Services
                     await _system.LocalStore.RemoveItemAsync("user");
                     _system.Token = null;
                     _system.User = null;
-                    return false;
-                }
+                    _system.MenuService.HideAutorize();
+                }     
             }
-            return false;
+            if (!_system.IsValidToken) _system.MenuService.HideAutorize();
         }
 
-        public async Task CheckToken(bool autorhize, Type pageType)
-        {
-            bool isValid = await IsValidToken();
-            if (isValid)
-            {
-                _system.MenuService.ShowAutorize();
-            }
-            else if (autorhize)
-            {
-                _system.MenuService.HideAutorize();
-                _system.NavigationManager.NavigateTo("login");
-            }
-            else
-            {
-                _system.MenuService.HideAutorize();
-            }
-
-        }
         private TokenValidationParameters GetValidationParameters()
         {
             return new TokenValidationParameters()
@@ -106,15 +94,17 @@ namespace IndustrialEnergy.Services
         {
             login.Password = SecurityService.Encrypt(login.Password);
 
-            var response = await _system.ServiceComponenet.InvokeMiddlewareAsync("/Autenticate", "/Login", login, null, Method.POST, ToastModalityShow.OnlySuccess);
+            var response = await _system.InvokeMiddlewareAsync("/Autenticate", "/Login", login, null, Method.POST, ToastModalityShow.OnlySuccess);
             ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 _system.Token = responseContent.Content["Token"];
                 _system.User = JsonConvert.DeserializeObject<User>(responseContent.Content["User"]);
+                _system.IsValidToken = true;
                 await _system.LocalStore.SetItemAsync<User>("user", _system.User);
                 await _system.LocalStore.SetItemAsync<string>("jwt", "Bearer " + _system.Token);
+
                 _system.ToastService.ShowToast("Login", "ok", ToastLevel.Success);
                 _system.NavigationManager.NavigateTo("");
             }
@@ -125,21 +115,23 @@ namespace IndustrialEnergy.Services
         {
             _system.Token = null;
             _system.User = null;
+            _system.IsValidToken = false;
             await _system.LocalStore.ClearAsync();
             _system.NavigationManager.NavigateTo("");
         }
+
         public async Task<IRestResponse> SignUp(User user)
         {
             LoginUser login = new LoginUser() { Username = user.UserName, Password = user.Password };
             user.Password = SecurityService.Encrypt(login.Password);
 
-            var response = await _system.ServiceComponenet.InvokeMiddlewareAsync("/Autenticate", "/Signup", user, null, Method.POST, ToastModalityShow.OnlyError);
+            var response = await _system.InvokeMiddlewareAsync("/Autenticate", "/Signup", user, null, Method.POST, ToastModalityShow.OnlyError);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 response = await Login(login);
+
             }
             return response;
         }
-
     }
 }

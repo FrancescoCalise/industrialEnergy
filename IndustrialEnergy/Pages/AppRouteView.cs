@@ -1,3 +1,4 @@
+using IndustrialEnergy.Components;
 using IndustrialEnergy.Models;
 using IndustrialEnergy.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -15,13 +16,16 @@ namespace IndustrialEnergy.AppRouteAuth
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        public IAuthenticationService AuthenticationService { get; set; }
+        public ISystemComponent System { get; set; }
 
         protected override void Render(RenderTreeBuilder builder)
         {
 
             var authorize = Attribute.GetCustomAttribute(RouteData.PageType, typeof(AuthorizeAttribute)) != null;
-            AuthenticationService.CheckToken(authorize, RouteData.PageType);
+            if (!System.IsValidToken && authorize)
+            {
+                NavigationManager.NavigateTo("login");
+            }
             base.Render(builder);
 
         }

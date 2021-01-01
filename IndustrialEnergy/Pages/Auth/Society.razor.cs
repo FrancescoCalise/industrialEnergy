@@ -24,8 +24,10 @@ namespace IndustrialEnergy.Pages.Auth
             if (Societies == null)
             {
                 List<Society> societies = new List<Society>();
+                Dictionary<string, string> headers = new Dictionary<string, string>();
+                headers.Add("Authentication", _system.Token);
 
-                var response = await _system.ServiceComponenet.InvokeMiddlewareAsync("/Society", "/GetAllSocietiesByUser", null, null, Method.GET, ToastModalityShow.No);
+                var response = await _system.InvokeMiddlewareAsync("/Society", "/GetAllSocietiesByUser", null, headers, Method.GET, ToastModalityShow.No);
                 ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
                 if (response.StatusCode == HttpStatusCode.OK)
