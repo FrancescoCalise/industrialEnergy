@@ -18,9 +18,9 @@ namespace IndustrialEnergy.ServicesData
 
     public interface IUserServiceData
     {
-        Task<List<User>> GetAllUser();
-        Task<User> GetUserByUsername(string username);
-        Task<IActionResult> SaveUser(User user);
+        Task<List<UserModel>> GetAllUser();
+        Task<UserModel> GetUserByUsername(string username);
+        Task<IActionResult> SaveUser(UserModel user);
     }
 
     public class UserServiceData : ControllerBase, IUserServiceData
@@ -43,32 +43,32 @@ namespace IndustrialEnergy.ServicesData
             isMockEnabled = mockupService.IsMockupEnabled;
         }
 
-        public async Task<List<User>> GetAllUser()
+        public async Task<List<UserModel>> GetAllUser()
         {
-            List<User> users = new List<User>();
+            List<UserModel> users = new List<UserModel>();
             if (isMockEnabled)
             {
                 string json = System.IO.File.ReadAllText(pathFileMockup);
-                users = JsonConvert.DeserializeObject<List<User>>(json);
+                users = JsonConvert.DeserializeObject<List<UserModel>>(json);
 
             }
             else
             {
-                var collection = _mongoDBContex.GetCollection<User>(collectionName);
-                IAsyncCursor<User> task = await collection.FindAsync(x => !string.IsNullOrEmpty(x.Id));
+                var collection = _mongoDBContex.GetCollection<UserModel>(collectionName);
+                IAsyncCursor<UserModel> task = await collection.FindAsync(x => !string.IsNullOrEmpty(x.Id));
                 users = await task.ToListAsync();
             }
 
             return users;
         }
 
-        public async Task<User> GetUserByUsername(string username)
+        public async Task<UserModel> GetUserByUsername(string username)
         {
-            User user = new User();
+            UserModel user = new UserModel();
             if (isMockEnabled)
             {
                 string json = System.IO.File.ReadAllText(pathFileMockup);
-                List<User> users = JsonConvert.DeserializeObject<UsersCollection>(json).Users;
+                List<UserModel> users = JsonConvert.DeserializeObject<UsersCollection>(json).Users;
                 user = users.Find(u => u.UserName == username);
 
             }
@@ -76,10 +76,10 @@ namespace IndustrialEnergy.ServicesData
             {
                 try
                 {
-                    var collection = _mongoDBContex.GetCollection<User>(collectionName);
-                    FindOptions<User> options = new FindOptions<User> { Limit = 1 };
-                    IAsyncCursor<User> task = await collection.FindAsync(x => x.UserName.Equals(username), options);
-                    List<User> list = await task.ToListAsync();
+                    var collection = _mongoDBContex.GetCollection<UserModel>(collectionName);
+                    FindOptions<UserModel> options = new FindOptions<UserModel> { Limit = 1 };
+                    IAsyncCursor<UserModel> task = await collection.FindAsync(x => x.UserName.Equals(username), options);
+                    List<UserModel> list = await task.ToListAsync();
                     user = list.FirstOrDefault();
 
                 }
@@ -92,7 +92,7 @@ namespace IndustrialEnergy.ServicesData
             return user;
         }
 
-        public async Task<IActionResult> SaveUser(User user)
+        public async Task<IActionResult> SaveUser(UserModel user)
         {
             ResponseContent message = new ResponseContent();
             IActionResult result;
@@ -101,7 +101,7 @@ namespace IndustrialEnergy.ServicesData
             {
 
                 string json = System.IO.File.ReadAllText(pathFileMockup);
-                List<User> users = JsonConvert.DeserializeObject<UsersCollection>(json).Users;
+                List<UserModel> users = JsonConvert.DeserializeObject<UsersCollection>(json).Users;
 
                 if (users.Find(u => u.UserName == user.UserName) == null)
                 {
@@ -132,12 +132,12 @@ namespace IndustrialEnergy.ServicesData
             {
                 try
                 {
-                    var collection = _mongoDBContex.GetCollection<User>(collectionName);
+                    var collection = _mongoDBContex.GetCollection<UserModel>(collectionName);
 
-                    FindOptions<User> options = new FindOptions<User> { Limit = 1 };
-                    IAsyncCursor<User> task = await collection.FindAsync(x => x.UserName.Equals(user.UserName), options);
-                    List<User> list = await task.ToListAsync();
-                    User userFind = list.FirstOrDefault();
+                    FindOptions<UserModel> options = new FindOptions<UserModel> { Limit = 1 };
+                    IAsyncCursor<UserModel> task = await collection.FindAsync(x => x.UserName.Equals(user.UserName), options);
+                    List<UserModel> list = await task.ToListAsync();
+                    UserModel userFind = list.FirstOrDefault();
 
                     if (userFind == null)
                     {

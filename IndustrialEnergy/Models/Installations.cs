@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace IndustrialEnergy.Models
 {
-    public class Installations
+    public class InstallationsModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

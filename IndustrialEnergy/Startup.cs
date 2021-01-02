@@ -20,11 +20,14 @@ namespace IndustrialEnergy
     public class Startup
     {
         private readonly IConfiguration _configuration;
+        public static IConfiguration StaticConfig { get; private set; }
+
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             this._configuration = configuration;
+            StaticConfig = configuration;
             this._webHostEnvironment = webHostEnvironment;
 
             Debug.WriteLine($"Environment: {_webHostEnvironment.EnvironmentName}");

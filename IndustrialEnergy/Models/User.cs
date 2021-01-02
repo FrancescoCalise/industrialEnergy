@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IndustrialEnergy.Models
 {
-    public class User
+    public class UserModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -26,7 +26,7 @@ namespace IndustrialEnergy.Models
 
     public class UsersCollection
     {
-        public List<User> Users { get; set; }
+        public List<UserModel> Users { get; set; }
     }
 
     public class LoginUser

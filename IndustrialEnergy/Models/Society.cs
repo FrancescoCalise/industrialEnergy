@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IndustrialEnergy.Models
 {
-    public class Society
+    public class SocietyModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -24,7 +24,7 @@ namespace IndustrialEnergy.Models
 
     public class SocietyCollection
     {
-        public List<Society> Societies { get; set; }
+        public List<SocietyModel> Societies { get; set; }
     }
 }
 

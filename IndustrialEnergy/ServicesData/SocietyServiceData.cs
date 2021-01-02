@@ -17,8 +17,8 @@ namespace IndustrialEnergy.ServicesData
 
     public interface ISocietyServiceData
     {
-        Task<List<Society>> GetAllSocietiesByUser();
-        Task<IActionResult> SaveSociety(Society society);
+        Task<List<SocietyModel>> GetAllSocietiesByUser(string userId);
+        Task<IActionResult> SaveSociety(SocietyModel society);
     }
 
     public class SocietyServiceData : ControllerBase, ISocietyServiceData
@@ -37,26 +37,27 @@ namespace IndustrialEnergy.ServicesData
             isMockEnabled = mockupService.IsMockupEnabled;
         }
 
-        public async Task<List<Society>> GetAllSocietiesByUser()
+        public async Task<List<SocietyModel>> GetAllSocietiesByUser(string userId)
         {
-            List<Society> societies = new List<Society>();
+            List<SocietyModel> societies = new List<SocietyModel>();
             if (isMockEnabled)
             {
                 string json = System.IO.File.ReadAllText(pathFileMockup);
                 societies = JsonConvert.DeserializeObject<SocietyCollection>(json).Societies;
+                societies = societies.FindAll(s => s.UserId == userId);
 
             }
             else
             {
-                var collection = _mongoDBContex.GetCollection<Society>(collectionName);
-                IAsyncCursor<Society> task = await collection.FindAsync(x => x.UserId == "");
+                var collection = _mongoDBContex.GetCollection<SocietyModel>(collectionName);
+                IAsyncCursor<SocietyModel> task = await collection.FindAsync(x => x.UserId == "");
                 societies = await task.ToListAsync();
             }
 
             return societies;
         }
 
-        public async Task<IActionResult> SaveSociety(Society society)
+        public async Task<IActionResult> SaveSociety(SocietyModel society)
         {
             ResponseContent message = new ResponseContent();
             IActionResult result;
@@ -65,7 +66,7 @@ namespace IndustrialEnergy.ServicesData
             {
 
                 string json = System.IO.File.ReadAllText(pathFileMockup);
-                List<Society> societies = JsonConvert.DeserializeObject<SocietyCollection>(json).Societies;
+                List<SocietyModel> societies = JsonConvert.DeserializeObject<SocietyCollection>(json).Societies;
 
                 if (societies.Find(u => u.Name == society.Name) == null)
                 {
@@ -101,12 +102,12 @@ namespace IndustrialEnergy.ServicesData
             {
                 try
                 {
-                    var collection = _mongoDBContex.GetCollection<Society>(collectionName);
+                    var collection = _mongoDBContex.GetCollection<SocietyModel>(collectionName);
 
-                    FindOptions<Society> options = new FindOptions<Society> { Limit = 1 };
-                    IAsyncCursor<Society> task = await collection.FindAsync(x => x.Name.Equals(society.Name), options);
-                    List<Society> list = await task.ToListAsync();
-                    Society societyFind = list.FirstOrDefault();
+                    FindOptions<SocietyModel> options = new FindOptions<SocietyModel> { Limit = 1 };
+                    IAsyncCursor<SocietyModel> task = await collection.FindAsync(x => x.Name.Equals(society.Name), options);
+                    List<SocietyModel> list = await task.ToListAsync();
+                    SocietyModel societyFind = list.FirstOrDefault();
 
                     if (societyFind == null)
                     {
@@ -120,11 +121,11 @@ namespace IndustrialEnergy.ServicesData
                     {
                         societyFind.Name = society.Name;
                         societyFind.Contact = society.Contact;
-                        var optionsAndReplace = new FindOneAndReplaceOptions<Society>
+                        var optionsAndReplace = new FindOneAndReplaceOptions<SocietyModel>
                         {
                             ReturnDocument = ReturnDocument.After
                         };
-                        var up = await collection.FindOneAndReplaceAsync<Society>(u => u.Id == society.Id, society, optionsAndReplace);
+                        var up = await collection.FindOneAndReplaceAsync<SocietyModel>(u => u.Id == society.Id, society, optionsAndReplace);
 
                         //TODO IDML
                         message = new ResponseContent("Society updated");

@@ -24,20 +24,20 @@ namespace IndustrialEnergy.Controllers
     public class SocietyController : ControllerBase
     {
         private ISocietyServiceData _societyServiceData { get; set; }
-
         public SocietyController(
-            ISocietyServiceData societyService)
+            ISocietyServiceData societyService
+            )
         {
             _societyServiceData = societyService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllSocietiesByUser()
+        public async Task<IActionResult> GetAllSocietiesByUser(string userId)
         {
             //TODO IDML
             ResponseContent messageResponse = new ResponseContent() { Message = "Imposibile to get all societies" };
             IActionResult response = Unauthorized(messageResponse);
-            var societies = await _societyServiceData.GetAllSocietiesByUser();
+            var societies = await _societyServiceData.GetAllSocietiesByUser(userId);
 
             if (societies != null)
             {
@@ -53,7 +53,7 @@ namespace IndustrialEnergy.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveSociety([FromBody] Society society)
+        public async Task<IActionResult> SaveSociety([FromBody] SocietyModel society)
         {
             return await _societyServiceData.SaveSociety(society);
         }

@@ -2,14 +2,43 @@
 @inherits SocietyComponentBase
 @attribute [Authorize]
 
-<div class="card mt-4">
-    <h6>Society</h6>
-</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Contact</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Societies != null)
+        {
+            @foreach (SocietyModel item in Societies)
+            {
+                <tr class="cursor-pointer" @onclick="@(() => Edit(item))">
+                    <td>@item.Name</td>
+                    <td>@item.Address</td>
+                    <td>@item.Contact</td>
+                </tr>
+            }}
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="@(() => AddNewSociety())">Add New Society</button>
 
 @code {
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+
         await GetAllCurrentSociety();
     }
+
+
+    void Edit(SocietyModel item) => Console.WriteLine($"Edit item: {item.Name}");
+    void Remove(SocietyModel item) => Console.WriteLine($"Remove item: {item.Name}");
+    void AddNewSociety() => Console.WriteLine($"Add");
+
+
 }

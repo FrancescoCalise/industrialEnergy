@@ -24,6 +24,12 @@
     private List<string> NotAutorizePages = new List<string>() { "login", "signUp", "forgotPassword", "logout" };
     private async Task OnNavigateAsync(NavigationContext args)
     {
+        bool conteinsKey = await System.LocalStore.ContainKeyAsync("jwt");
+        if (string.IsNullOrEmpty(System.Token) && conteinsKey)
+        {
+            await System.Init();
+        }
+
         if (!NotAutorizePages.Contains(args.Path))
             await Authentication.CheckIfTokenIsValid();
 

@@ -36,7 +36,7 @@ namespace IndustrialEnergy.Controllers
             _userService = userService;
         }
 
-        private string GenerateJSONWebToken(User user)
+        private string GenerateJSONWebToken(UserModel user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -61,19 +61,13 @@ namespace IndustrialEnergy.Controllers
 
             return encodeToken;
         }
-        private async Task<User> GetUserByUsername(string username)
-        {
-            return await _userService.GetUserByUsername(username);
-
-
-        }
 
         private async Task<IActionResult> AuthenticateUser(LoginUser login)
         {
-            User user = await _userService.GetUserByUsername(login.Username);
+            UserModel user = await _userService.GetUserByUsername(login.Username);
             //TODO IDML
             ResponseContent messageResponse = new ResponseContent() { Message = "User/password is wrong" };
-            IActionResult response = Unauthorized(messageResponse);
+            IActionResult response = BadRequest(messageResponse);
 
             if (user != null && !string.IsNullOrEmpty(user.Id))
             {
@@ -89,6 +83,7 @@ namespace IndustrialEnergy.Controllers
                     messageResponse.Message = "Login Ok";
                     response = Ok(messageResponse);
                 }
+                
 
 
             }
@@ -106,15 +101,15 @@ namespace IndustrialEnergy.Controllers
         }
 
         [HttpPost]
-        public async Task<User> GetUserByLogin([FromBody] LoginUser login)
+        public async Task<UserModel> GetUserByUsername([FromBody] string username)
         {
-            return await GetUserByUsername(login.Username);
 
+            return await _userService.GetUserByUsername(username);
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> SignUp([FromBody] User user)
+        public async Task<IActionResult> SignUp([FromBody] UserModel user)
         {
             return await _userService.SaveUser(user);
         }

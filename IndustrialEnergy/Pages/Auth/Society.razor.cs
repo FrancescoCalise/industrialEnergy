@@ -17,25 +17,23 @@ namespace IndustrialEnergy.Pages.Auth
     public class SocietyComponentBase : ComponentBase
     {
         [Inject] private ISystemComponent _system { get; set; }
-        public List<Society> Societies { get; set; }
+        public List<SocietyModel> Societies { get; set; }
 
         public async Task GetAllCurrentSociety()
         {
             if (Societies == null)
             {
-                List<Society> societies = new List<Society>();
-                Dictionary<string, string> headers = new Dictionary<string, string>();
-                headers.Add("Authorization", _system.Token);
+                List<SocietyModel> societies = new List<SocietyModel>();
 
-                var response = await _system.InvokeMiddlewareAsync("/Society", "/GetAllSocietiesByUser", null, headers, Method.GET, ToastModalityShow.No);
+                var response = await _system.InvokeMiddlewareAsync("/Society", "/GetAllSocietiesByUser?UserId=" + _system.User.Id, null, _system.Headers, Method.GET, ToastModalityShow.No);
                 ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    Societies = JsonConvert.DeserializeObject<List<Society>>(responseContent.Content["Societies"]);
+                    Societies = JsonConvert.DeserializeObject<List<SocietyModel>>(responseContent.Content["Societies"]);
                 }
             }
         }
-       
+
     }
 }

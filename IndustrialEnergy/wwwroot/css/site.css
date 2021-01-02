@@ -69,3 +69,7 @@ a, .btn-link {
     top: 50%;
     position: absolute;
 }
+
+.cursor-pointer{
+    cursor:pointer!important;
+}

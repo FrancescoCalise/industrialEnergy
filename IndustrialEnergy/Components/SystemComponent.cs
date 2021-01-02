@@ -4,14 +4,17 @@ using IndustrialEnergy.Services;
 using IndustrialEnergy.Utility;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RestSharp;
 using RestSharp.Serializers;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace IndustrialEnergy.Components
@@ -24,12 +27,13 @@ namespace IndustrialEnergy.Components
         public ILocalStorageService LocalStore { get; set; }
         public IConfiguration Config { get; set; }
         public MenuService MenuService { get; set; }
-        public User User { get; set; }
+        public UserModel User { get; set; }
         public string Token { get; set; }
         public bool IsValidToken { get; set; }
-
+        public Dictionary<string, string> Headers { get; set; }
         Task<IRestResponse> InvokeMiddlewareAsync(string controller, string action, object requestBody, Dictionary<string, string> requesteHeader, Method method, ToastModalityShow toastShow);
-
+        Task Init();
+        Task ClearInit();
     }
 
     public class SystemComponent : ISystemComponent
@@ -40,10 +44,11 @@ namespace IndustrialEnergy.Components
         public ILocalStorageService LocalStore { get; set; }
         public IConfiguration Config { get; set; }
         public MenuService MenuService { get; set; }
-        public User User { get; set; }
+        public UserModel User { get; set; }
         public string Token { get; set; }
         public bool IsValidToken { get; set; }
         private string uri = string.Empty;
+        public Dictionary<string, string> Headers { get; set; }
 
         public SystemComponent(
             SpinnerService spinnerService,
@@ -177,6 +182,58 @@ namespace IndustrialEnergy.Components
             }
 
             return canShow;
+        }
+
+        public async Task Init()
+        {
+            if(string.IsNullOrEmpty(Token))
+                Token = await LocalStore.GetItemAsync<string>("jwt");
+
+            if (!string.IsNullOrEmpty(Token))
+            {
+                Headers = new Dictionary<string, string>();
+                Headers.Add("Authorization","Bearer " + Token);
+                User = await GetUserByToken();
+
+                MenuService.ShowAutorize();
+            }
+        }
+
+        private async Task<UserModel> GetUserByToken()
+        {
+            UserModel user = new UserModel();
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = TokenService.GetValidationParameters();
+            SecurityToken validatedToken;
+            try
+            {
+                var converToken = Token.Contains("Bearer") ? Token.Substring(7) : Token;
+                IPrincipal principal = tokenHandler.ValidateToken(converToken, validationParameters, out validatedToken);
+                if (validatedToken != null)
+                {
+                    var token = tokenHandler.ReadJwtToken(converToken);
+                    var username = token.Claims.First(claim => claim.Type == "sub").Value;
+
+                    var userResponse = await InvokeMiddlewareAsync("/Autenticate", "/GetUserByUsername", username, Headers, Method.POST, ToastModalityShow.No);
+                    if (userResponse.StatusCode == HttpStatusCode.OK)
+                    {
+                        user = JsonConvert.DeserializeObject<UserModel>(userResponse.Content);
+                    }
+                }
+            }
+            catch { }
+
+            return user;
+        }
+
+        public async Task ClearInit()
+        {
+            Token = null;
+            User = null;
+            IsValidToken = false;
+            Headers = null;
+            MenuService.HideAutorize();
+            await LocalStore.ClearAsync();
         }
     }
 

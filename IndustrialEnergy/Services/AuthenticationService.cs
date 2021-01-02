@@ -21,9 +21,8 @@ namespace IndustrialEnergy.Services
     {
         //Task CheckToken(bool authorize, Type pageType);
         Task CheckIfTokenIsValid();
-        Task Initialize();
         Task<IRestResponse> Login(LoginUser login);
-        Task<IRestResponse> SignUp(User user);
+        Task<IRestResponse> SignUp(UserModel user);
         Task Logout();
     }
 
@@ -36,25 +35,14 @@ namespace IndustrialEnergy.Services
             _system = system;
         }
 
-        public async Task Initialize()
-        {
-            _system.Token = await _system.LocalStore.GetItemAsync<string>("jwt");
-            _system.User = await _system.LocalStore.GetItemAsync<User>("user");
-        }
-
         public async Task CheckIfTokenIsValid()
         {
             _system.IsValidToken = false;
-            bool conteinsKey = await _system.LocalStore.ContainKeyAsync("jwt");
-            if (string.IsNullOrEmpty(_system.Token) && conteinsKey)
-            {
-                await Initialize();
-            }
 
             if (!string.IsNullOrEmpty(_system.Token))
             {
                 JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-                var validationParameters = GetValidationParameters();
+                var validationParameters = TokenService.GetValidationParameters();
                 SecurityToken validatedToken;
                 try
                 {
@@ -68,28 +56,12 @@ namespace IndustrialEnergy.Services
                 }
                 catch (Exception ex)
                 {
-                    await _system.LocalStore.RemoveItemAsync("jwt");
-                    await _system.LocalStore.RemoveItemAsync("user");
-                    _system.Token = null;
-                    _system.User = null;
-                    _system.MenuService.HideAutorize();
-                }     
+                    await _system.ClearInit();
+                }
             }
             if (!_system.IsValidToken) _system.MenuService.HideAutorize();
         }
-        private TokenValidationParameters GetValidationParameters()
-        {
-            return new TokenValidationParameters()
-            {
-                ValidateIssuerSigningKey = true,
-                ValidateLifetime = true,
-                ValidateAudience = true,
-                ValidateIssuer = true,
-                ValidIssuer = _system.Config["Jwt:Issuer"],
-                ValidAudience = _system.Config["Jwt:Issuer"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_system.Config["Jwt:Key"]))
-            };
-        }
+
         public async Task<IRestResponse> Login(LoginUser login)
         {
             login.Password = SecurityService.Encrypt(login.Password);
@@ -98,37 +70,30 @@ namespace IndustrialEnergy.Services
             ResponseContent tokenResponseContent = JsonConvert.DeserializeObject<ResponseContent>(tokenResponse.Content);
             if (tokenResponse.StatusCode == HttpStatusCode.OK)
             {
-                _system.Token = tokenResponseContent.Content["Token"];
-                _system.IsValidToken = true;
-                await _system.LocalStore.SetItemAsync<string>("jwt", "Bearer " + _system.Token);
+                var token = tokenResponseContent.Content["Token"];
+                try
+                {
+                    await _system.LocalStore.SetItemAsync<string>("jwt", token);
+                    await _system.Init();
+                }
+                catch (Exception ex)
+                {
+                    var x = ex;
+                }
             }
+            _system.ToastService.ShowToast("Login", "ok", ToastLevel.Success);
+            _system.NavigationManager.NavigateTo("");
 
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("Authorization", "Bearer " + _system.Token);
-
-            var userResponse = await _system.InvokeMiddlewareAsync("/Autenticate", "/GetUserByLogin", login, headers, Method.POST, ToastModalityShow.OnlySuccess);
-            if (userResponse.StatusCode == HttpStatusCode.OK)
-            {
-                _system.User = JsonConvert.DeserializeObject<User>(userResponse.Content);
-                await _system.LocalStore.SetItemAsync<User>("user", _system.User);
-                _system.ToastService.ShowToast("Login", "ok", ToastLevel.Success);
-                _system.NavigationManager.NavigateTo("");
-            }
-
-
-
-            return userResponse;
+            return tokenResponse;
         }
         public async Task Logout()
         {
-            _system.Token = null;
-            _system.User = null;
-            _system.IsValidToken = false;
-            await _system.LocalStore.ClearAsync();
+            await _system.ClearInit();
+
             _system.NavigationManager.NavigateTo("");
         }
 
-        public async Task<IRestResponse> SignUp(User user)
+        public async Task<IRestResponse> SignUp(UserModel user)
         {
             LoginUser login = new LoginUser() { Username = user.UserName, Password = user.Password };
             user.Password = SecurityService.Encrypt(login.Password);

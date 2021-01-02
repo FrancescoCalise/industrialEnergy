@@ -68,9 +68,11 @@
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-
-                error = responseContent.Message;
-                StateHasChanged();
+                if (responseContent != null)
+                {
+                    error = responseContent.Message;
+                    StateHasChanged();
+                }
             }
         }
         catch (Exception ex)
