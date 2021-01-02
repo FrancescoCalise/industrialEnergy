@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Principal;
@@ -76,7 +77,6 @@ namespace IndustrialEnergy.Services
             }
             if (!_system.IsValidToken) _system.MenuService.HideAutorize();
         }
-
         private TokenValidationParameters GetValidationParameters()
         {
             return new TokenValidationParameters()
@@ -94,22 +94,30 @@ namespace IndustrialEnergy.Services
         {
             login.Password = SecurityService.Encrypt(login.Password);
 
-            var response = await _system.InvokeMiddlewareAsync("/Autenticate", "/Login", login, null, Method.POST, ToastModalityShow.OnlySuccess);
-            ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            var tokenResponse = await _system.InvokeMiddlewareAsync("/Autenticate", "/Login", login, null, Method.POST, ToastModalityShow.No);
+            ResponseContent tokenResponseContent = JsonConvert.DeserializeObject<ResponseContent>(tokenResponse.Content);
+            if (tokenResponse.StatusCode == HttpStatusCode.OK)
             {
-                _system.Token = responseContent.Content["Token"];
-                _system.User = JsonConvert.DeserializeObject<User>(responseContent.Content["User"]);
+                _system.Token = tokenResponseContent.Content["Token"];
                 _system.IsValidToken = true;
-                await _system.LocalStore.SetItemAsync<User>("user", _system.User);
                 await _system.LocalStore.SetItemAsync<string>("jwt", "Bearer " + _system.Token);
+            }
 
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("Authorization", "Bearer " + _system.Token);
+
+            var userResponse = await _system.InvokeMiddlewareAsync("/Autenticate", "/GetUserByLogin", login, headers, Method.POST, ToastModalityShow.OnlySuccess);
+            if (userResponse.StatusCode == HttpStatusCode.OK)
+            {
+                _system.User = JsonConvert.DeserializeObject<User>(userResponse.Content);
+                await _system.LocalStore.SetItemAsync<User>("user", _system.User);
                 _system.ToastService.ShowToast("Login", "ok", ToastLevel.Success);
                 _system.NavigationManager.NavigateTo("");
             }
 
-            return response;
+
+
+            return userResponse;
         }
         public async Task Logout()
         {

@@ -1,14 +1,13 @@
 @inject NavigationManager NavigationManager
 @inject IAuthenticationService Authentication
-@using IndustrialEnergy.Pages.Shared.Spinner
 
 <Router AppAssembly="@typeof(Program).Assembly" OnNavigateAsync="@OnNavigateAsync">
     <Navigating>
-        <div class="spinner-container">
+        @*<div class="spinner-container">
             <div class="spinner-center">
                 <SpinKitCircle />
             </div>
-        </div>
+        </div>*@
     </Navigating>
     <Found Context="routeData">
         <AppRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />

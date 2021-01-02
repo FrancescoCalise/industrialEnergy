@@ -25,7 +25,7 @@ namespace IndustrialEnergy.ServicesData
     {
         private IMongoDatabase _mongoDBContex { get; set; }
         private bool isMockEnabled { get; set; }
-        private const string pathFileMockup = "MongoDB/Mockup/societiesCollection.json";
+        private const string pathFileMockup = "MongoDB/Mockup/societyCollection.json";
         private string collectionName = "Societies";
 
         public SocietyServiceData(
@@ -43,7 +43,7 @@ namespace IndustrialEnergy.ServicesData
             if (isMockEnabled)
             {
                 string json = System.IO.File.ReadAllText(pathFileMockup);
-                societies = JsonConvert.DeserializeObject<List<Society>>(json);
+                societies = JsonConvert.DeserializeObject<SocietyCollection>(json).Societies;
 
             }
             else

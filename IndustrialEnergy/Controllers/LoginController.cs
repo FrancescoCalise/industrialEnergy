@@ -1,4 +1,5 @@
-﻿using IndustrialEnergy.Components;
+﻿using Blazored.LocalStorage;
+using IndustrialEnergy.Components;
 using IndustrialEnergy.Models;
 using IndustrialEnergy.Services;
 using IndustrialEnergy.ServicesData;
@@ -28,7 +29,8 @@ namespace IndustrialEnergy.Controllers
 
         public AutenticateController(
             IConfiguration config,
-            IUserServiceData userService)
+            IUserServiceData userService
+            )
         {
             _config = config;
             _userService = userService;
@@ -59,6 +61,12 @@ namespace IndustrialEnergy.Controllers
 
             return encodeToken;
         }
+        private async Task<User> GetUserByUsername(string username)
+        {
+            return await _userService.GetUserByUsername(username);
+
+
+        }
 
         private async Task<IActionResult> AuthenticateUser(LoginUser login)
         {
@@ -76,7 +84,6 @@ namespace IndustrialEnergy.Controllers
                     string tokenString = GenerateJSONWebToken(user);
                     var content = new Dictionary<string, string>();
                     content.Add("Token", tokenString);
-                    content.Add("User", JsonConvert.SerializeObject(user));
                     messageResponse.Content = content;
                     //TODO IDML
                     messageResponse.Message = "Login Ok";
@@ -96,6 +103,13 @@ namespace IndustrialEnergy.Controllers
             IActionResult response = await AuthenticateUser(login);
 
             return response;
+        }
+
+        [HttpPost]
+        public async Task<User> GetUserByLogin([FromBody] LoginUser login)
+        {
+            return await GetUserByUsername(login.Username);
+
         }
 
         [AllowAnonymous]
