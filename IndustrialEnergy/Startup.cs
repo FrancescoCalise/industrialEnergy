@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Blazored.Modal;
 using IndustrialEnergy.Components;
 using IndustrialEnergy.MongoDB;
 using IndustrialEnergy.Services;
@@ -37,6 +38,7 @@ namespace IndustrialEnergy
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddBlazoredModal();
             services.AddBlazoredLocalStorage();
             services.AddSingleton(_configuration);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

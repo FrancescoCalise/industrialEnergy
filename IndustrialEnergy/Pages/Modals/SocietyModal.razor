@@ -1,0 +1,56 @@
+﻿@page "/societyModal"
+
+  
+            @if (society != null)
+            {
+                <EditForm Model="@society" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="form-group">
+                        <label>Name</label>
+                        <InputText @bind-Value="society.Name" class="form-control" />
+                        <ValidationMessage For="@(() => society.Name)" />
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <InputText @bind-Value="society.Address" type="text" class="form-control" />
+                        <ValidationMessage For="@(() => society.Address)" />
+                    </div>
+                    <div class="form-group">
+                        <label>Contact</label>
+                        <InputText @bind-Value="society.Contact" class="form-control" />
+                        <ValidationMessage For="@(() => society.Contact)" />
+                    </div>
+
+                    <button class="btn btn-primary">
+                        Submit
+                    </button>
+
+                    @if (!string.IsNullOrEmpty(error))
+                    {
+                        <div class="alert alert-danger mt-3 mb-0">@error</div>
+                    }
+
+                </EditForm>
+                }
+
+
+@code{
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public SocietyModel society { get; set; }
+    private string error;
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+    }
+
+    private void HandleValidSubmit()
+    {
+        ModalInstance.Close();
+    }
+
+
+
+}

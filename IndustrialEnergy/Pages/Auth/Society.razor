@@ -1,5 +1,7 @@
 ﻿@page "/Society"
 @inherits SocietyComponentBase
+@inject IModalService Modal
+
 @attribute [Authorize]
 
 <table class="table">
@@ -15,7 +17,7 @@
         {
             @foreach (SocietyModel item in Societies)
             {
-                <tr class="cursor-pointer" @onclick="@(() => Edit(item))">
+                <tr class="cursor-pointer" @onclick="@(() => OpenModal(item))">
                     <td>@item.Name</td>
                     <td>@item.Address</td>
                     <td>@item.Contact</td>
@@ -24,7 +26,7 @@
     </tbody>
 </table>
 
-<button class="btn btn-primary" @onclick="@(() => AddNewSociety())">Add New Society</button>
+<button class="btn btn-primary" @onclick="@(() => OpenModal(new SocietyModel()))">Add New Society</button>
 
 @code {
 
@@ -40,5 +42,11 @@
     void Remove(SocietyModel item) => Console.WriteLine($"Remove item: {item.Name}");
     void AddNewSociety() => Console.WriteLine($"Add");
 
+    void OpenModal(SocietyModel society)
+    {
+        var modalParameter = new ModalParameters();
+        modalParameter.Add(nameof(society), society);
 
+        Modal.Show<SocietyModal>("Add new Society", modalParameter);
+    }
 }

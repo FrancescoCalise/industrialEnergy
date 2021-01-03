@@ -186,14 +186,33 @@ namespace IndustrialEnergy.Components
 
         public async Task Init()
         {
-            if(string.IsNullOrEmpty(Token))
-                Token = await LocalStore.GetItemAsync<string>("jwt");
+            if (string.IsNullOrEmpty(Token))
+            {
+                bool islocalSaved = await LocalStore.ContainKeyAsync("jwt");
+                if (islocalSaved)
+                {
+                    Token = await LocalStore.GetItemAsync<string>("jwt");
+                }
+            }
 
             if (!string.IsNullOrEmpty(Token))
             {
                 Headers = new Dictionary<string, string>();
-                Headers.Add("Authorization","Bearer " + Token);
-                User = await GetUserByToken();
+                Headers.Add("Authorization", "Bearer " + Token);
+            }
+            if (User == null)
+            {
+                bool islocalSaved = await LocalStore.ContainKeyAsync("user");
+                if (islocalSaved)
+                {
+                    User = await LocalStore.GetItemAsync<UserModel>("user");
+                }
+                else
+                {
+                    User = await GetUserByToken();
+                    User.Password = "";
+                    await LocalStore.SetItemAsync<UserModel>("user", User);
+                }
 
                 MenuService.ShowAutorize();
             }
