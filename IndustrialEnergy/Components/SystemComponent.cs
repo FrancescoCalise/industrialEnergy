@@ -199,23 +199,25 @@ namespace IndustrialEnergy.Components
             {
                 Headers = new Dictionary<string, string>();
                 Headers.Add("Authorization", "Bearer " + Token);
-            }
-            if (User == null)
-            {
-                bool islocalSaved = await LocalStore.ContainKeyAsync("user");
-                if (islocalSaved)
-                {
-                    User = await LocalStore.GetItemAsync<UserModel>("user");
-                }
-                else
-                {
-                    User = await GetUserByToken();
-                    User.Password = "";
-                    await LocalStore.SetItemAsync<UserModel>("user", User);
-                }
 
-                MenuService.ShowAutorize();
+                if (User == null)
+                {
+                    bool islocalSaved = await LocalStore.ContainKeyAsync("user");
+                    if (islocalSaved)
+                    {
+                        User = await LocalStore.GetItemAsync<UserModel>("user");
+                    }
+                    else
+                    {
+                        User = await GetUserByToken();
+                        User.Password = null;
+                        await LocalStore.SetItemAsync<UserModel>("user", User);
+                    }
+
+                    MenuService.ShowAutorize();
+                }
             }
+
         }
 
         private async Task<UserModel> GetUserByToken()

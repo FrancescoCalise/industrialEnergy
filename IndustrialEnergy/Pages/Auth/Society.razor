@@ -4,6 +4,7 @@
 
 @attribute [Authorize]
 
+<h2> My Societies List</h2>
 <table class="table">
     <thead>
         <tr>
@@ -22,9 +23,14 @@
                     <td>@item.Address</td>
                     <td>@item.Contact</td>
                 </tr>
-            }}
+            }
+        }
     </tbody>
 </table>
+@if (Societies == null || Societies != null && Societies.Count == 0)
+{
+    <p>No Society Found</p>
+}
 
 <button class="btn btn-primary" @onclick="@(() => OpenModal(new SocietyModel()))">Add New Society</button>
 
@@ -32,21 +38,51 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
+        if (System.User != null)
+        {
+            await base.OnInitializedAsync();
+            await GetAllCurrentSociety();
 
-        await GetAllCurrentSociety();
+        }
     }
 
-
-    void Edit(SocietyModel item) => Console.WriteLine($"Edit item: {item.Name}");
-    void Remove(SocietyModel item) => Console.WriteLine($"Remove item: {item.Name}");
-    void AddNewSociety() => Console.WriteLine($"Add");
-
-    void OpenModal(SocietyModel society)
+    async Task OpenModal(SocietyModel society)
     {
         var modalParameter = new ModalParameters();
         modalParameter.Add(nameof(society), society);
+        modalParameter.Add(nameof(Societies) + "Modal", Societies);
+        string label = society.Id == null ? "Add new Society" : "Update Society";
+        var formModal = Modal.Show<SocietyModal>(label, modalParameter);
+        var result = await formModal.Result;
 
-        Modal.Show<SocietyModal>("Add new Society", modalParameter);
+        if (!result.Cancelled)
+        {
+            if (result.Data != null)
+            {
+                bool isDelete = result.Data.ToString() == "Deleted";
+                if (isDelete)
+                {
+                    Societies.Remove(society);
+                }
+                else
+                {
+                    var res = (SocietyModel)result.Data;
+                    if (Societies != null)
+                    {
+                        if (society.Id == null && society.Name != res.Name)
+                        {
+                            Societies.Add(res);
+                        }
+                        else
+                        {
+                            Societies.RemoveAll(s => s.Id == res.Id);
+                            Societies.Add(res);
+
+                        }
+                    }
+                    StateHasChanged();
+                }
+            }
+        }
     }
 }

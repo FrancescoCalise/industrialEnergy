@@ -1,18 +1,1 @@
-{
-  "Societies": [
-    {
-      "Id": "5fee77d8baf11337fd136dda",
-      "UserId": "5fe487046f4808dda8059a09",
-      "Name": "Fuffologia",
-      "Address": "via dei tarocchi",
-      "Contact": "+39 333 923 439"
-    },
-    {
-      "Id": "5fee77e11ac5888f4f6c9471",
-      "UserId": "5fe48756b0bbab6bfcb0785e",
-      "Name": "Realismo",
-      "Address": "Via paradiso",
-      "Contact": "+66 789 097 67"
-    }
-  ]
-}
+{"Societies":[{"Id":"5fee77d8baf11337fd136dda","UserId":"5fe487046f4808dda8059a09","Name":"Fuffologia","Address":"via dei tarocchi","Contact":"+39 333 923 439"},{"Id":"5fee77e11ac5888f4f6c9471","UserId":"5fe48756b0bbab6bfcb0785e","Name":"Realismo","Address":"Via paradiso","Contact":"+66 789 097 67"},{"Id":"5ff183d4704a1b0cf6dc8ca8","UserId":"5fe487046f4808dda8059a09","Name":"tuttologia","Address":"via casa","Contact":"33189087"},{"Id":"5ff225b868267a400559dcbd","UserId":"5fe487046f4808dda8059a09","Name":"calise","Address":"via biaola ","Contact":"33173"}]}

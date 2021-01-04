@@ -1,37 +1,43 @@
 ﻿@page "/societyModal"
+@inherits SocietyComponentBase
 
-  
-            @if (society != null)
+@if (society != null)
+{
+    <EditForm Model="@society">
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <label>Name</label>
+            <InputText @bind-Value="society.Name" class="form-control" />
+            <ValidationMessage For="@(() => society.Name)" />
+        </div>
+        <div class="form-group">
+            <label>Address</label>
+            <InputText @bind-Value="society.Address" type="text" class="form-control" />
+            <ValidationMessage For="@(() => society.Address)" />
+        </div>
+        <div class="form-group">
+            <label>Contact</label>
+            <InputText @bind-Value="society.Contact" class="form-control" />
+            <ValidationMessage For="@(() => society.Contact)" />
+        </div>
+
+        <div id="textbox">
+            <button @onclick="HandleValidSubmit" class="btn btn-primary alignleft">Submit</button>
+            @if (society.Id != null)
             {
-                <EditForm Model="@society" OnValidSubmit="HandleValidSubmit">
-                    <DataAnnotationsValidator />
-                    <div class="form-group">
-                        <label>Name</label>
-                        <InputText @bind-Value="society.Name" class="form-control" />
-                        <ValidationMessage For="@(() => society.Name)" />
-                    </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <InputText @bind-Value="society.Address" type="text" class="form-control" />
-                        <ValidationMessage For="@(() => society.Address)" />
-                    </div>
-                    <div class="form-group">
-                        <label>Contact</label>
-                        <InputText @bind-Value="society.Contact" class="form-control" />
-                        <ValidationMessage For="@(() => society.Contact)" />
-                    </div>
+            <button @onclick="Cancel" class="btn btn-danger alignright">Cancel</button>
+            }
+            <div style="clear: both;"></div>
+        </div>
 
-                    <button class="btn btn-primary">
-                        Submit
-                    </button>
 
-                    @if (!string.IsNullOrEmpty(error))
-                    {
-                        <div class="alert alert-danger mt-3 mb-0">@error</div>
-                    }
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert alert-danger mt-3 mb-0">@error</div>
+        }
 
-                </EditForm>
-                }
+    </EditForm>
+}
 
 
 @code{
@@ -39,18 +45,65 @@
 
     [Parameter]
     public SocietyModel society { get; set; }
+    [Parameter]
+    public List<SocietyModel> SocietiesModal { get; set; }
     private string error;
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnInitialized()
     {
+        Societies = SocietiesModal;
+    }
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            society.Name = society.Name.Trim();
+            society.Contact = society.Contact.Trim();
+            society.Address = society.Address.Trim();
+
+            IRestResponse response = await SaveSociety(society);
+            ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                if (responseContent != null)
+                {
+                    error = responseContent.Message;
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                await ModalInstance.Close(ModalResult.Ok<SocietyModel>(JsonConvert.DeserializeObject<SocietyModel>(responseContent.Content["society"])));
+            }
+        }
+        catch (Exception ex)
+        {
+            error = "";
+            StateHasChanged();
+        }
+
 
     }
-
-    private void HandleValidSubmit()
+    private async Task Cancel()
     {
-        ModalInstance.Close();
-    }
+        IRestResponse response = await DeleteSociety(society);
+        ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            if (responseContent != null)
+            {
+                error = responseContent.Message;
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            await ModalInstance.Close(ModalResult.Ok("Deleted"));
+
+        }
+    }
 
 
 }
