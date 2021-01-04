@@ -73,3 +73,10 @@ a, .btn-link {
 .cursor-pointer{
     cursor:pointer!important;
 }
+.alignleft {
+    float: left;
+}
+
+.alignright {
+    float: right;
+}

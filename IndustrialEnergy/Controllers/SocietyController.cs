@@ -55,8 +55,30 @@ namespace IndustrialEnergy.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveSociety([FromBody] SocietyModel society)
         {
-            return await _societyServiceData.SaveSociety(society);
+
+            ResponseContent messageResponse = new ResponseContent() { Message = "Error saving the company" };
+            IActionResult response = BadRequest(messageResponse);
+
+            society = await _societyServiceData.SaveSociety(society);
+
+            if (society != null)
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("society", JsonConvert.SerializeObject(society));
+
+                messageResponse = new ResponseContent("Save completed", dic);
+                response = Ok(messageResponse);
+            }
+
+            return response;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteSociety([FromBody] SocietyModel society)
+        {
+            IActionResult response = await _societyServiceData.DeleteSociety(society);
+
+            return response;
+        }
     }
 }

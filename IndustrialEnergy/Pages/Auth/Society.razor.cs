@@ -23,8 +23,6 @@ namespace IndustrialEnergy.Pages.Auth
         {
             if (Societies == null)
             {
-                List<SocietyModel> societies = new List<SocietyModel>();
-
                 var response = await _system.InvokeMiddlewareAsync("/Society", "/GetAllSocietiesByUser?UserId=" + _system.User.Id, null, _system.Headers, Method.GET, ToastModalityShow.No);
                 ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
@@ -33,6 +31,21 @@ namespace IndustrialEnergy.Pages.Auth
                     Societies = JsonConvert.DeserializeObject<List<SocietyModel>>(responseContent.Content["Societies"]);
                 }
             }
+        }
+
+        public async Task<IRestResponse> SaveSociety(SocietyModel society)
+        {
+            society.UserId = _system.User.Id;
+            var response = await _system.InvokeMiddlewareAsync("/Society", "/SaveSociety", society, _system.Headers, Method.POST, ToastModalityShow.No);
+
+            return response;
+        }
+
+        public async Task<IRestResponse> DeleteSociety(SocietyModel society)
+        {
+            var response = await _system.InvokeMiddlewareAsync("/Society", "/DeleteSociety", society, _system.Headers, Method.POST, ToastModalityShow.No);
+
+            return response;
         }
 
     }

@@ -18,7 +18,9 @@ namespace IndustrialEnergy.ServicesData
     public interface ISocietyServiceData
     {
         Task<List<SocietyModel>> GetAllSocietiesByUser(string userId);
-        Task<IActionResult> SaveSociety(SocietyModel society);
+        Task<SocietyModel> SaveSociety(SocietyModel society);
+        Task<SocietyModel> GetSocietyByName(string name);
+        Task<IActionResult> DeleteSociety(SocietyModel society);
     }
 
     public class SocietyServiceData : ControllerBase, ISocietyServiceData
@@ -49,99 +51,144 @@ namespace IndustrialEnergy.ServicesData
             }
             else
             {
-                var collection = _mongoDBContex.GetCollection<SocietyModel>(collectionName);
-                IAsyncCursor<SocietyModel> task = await collection.FindAsync(x => x.UserId == "");
-                societies = await task.ToListAsync();
+                try
+                {
+                    var collection = _mongoDBContex.GetCollection<SocietyModel>(collectionName);
+                    IAsyncCursor<SocietyModel> task = await collection.FindAsync(x => x.UserId == userId);
+                    societies = await task.ToListAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
             }
 
             return societies;
         }
-
-        public async Task<IActionResult> SaveSociety(SocietyModel society)
+        public async Task<SocietyModel> GetSocietyByName(string name)
         {
-            ResponseContent message = new ResponseContent();
-            IActionResult result;
-
+            SocietyModel societyFuond = new SocietyModel();
             if (isMockEnabled)
             {
-
                 string json = System.IO.File.ReadAllText(pathFileMockup);
                 List<SocietyModel> societies = JsonConvert.DeserializeObject<SocietyCollection>(json).Societies;
+                societyFuond = societies.Find(f => f.Name == name);
+            }
+            else
+            {
+                var collection = _mongoDBContex.GetCollection<SocietyModel>(collectionName);
 
-                if (societies.Find(u => u.Name == society.Name) == null)
+                FindOptions<SocietyModel> options = new FindOptions<SocietyModel> { Limit = 1 };
+                IAsyncCursor<SocietyModel> task = await collection.FindAsync(x => x.Name.Equals(name), options);
+                List<SocietyModel> list = await task.ToListAsync();
+                societyFuond = list.FirstOrDefault();
+            }
+            return societyFuond;
+        }
+        public async Task<SocietyModel> SaveSociety(SocietyModel society)
+        {
+            if (isMockEnabled)
+            {
+                string json = System.IO.File.ReadAllText(pathFileMockup);
+                List<SocietyModel> societies = JsonConvert.DeserializeObject<SocietyCollection>(json).Societies;
+                var societyFound = await GetSocietyByName(society.Name);
+
+                if (societyFound == null)
                 {
-                    society.UserId = "";
+                    society.Id = ObjectId.GenerateNewId().ToString();
                     societies.Add(society);
-                    SocietyCollection collection = new SocietyCollection();
-                    collection.Societies = societies;
-
-                    string jsonUpdate = JsonConvert.SerializeObject(collection);
-                    //write string to file
-                    System.IO.File.WriteAllText(pathFileMockup, jsonUpdate);
-
-                    //TODO IDML
-                    message = new ResponseContent("society added");
-                    result = Ok(message);
-
                 }
-                else
+                else if (societyFound.UserId == society.UserId)
                 {
-                    var lastSociety = societies.Find(u => u.Name == society.Name && u.UserId != null);
-                    society.UserId = "";
-                    society.Id = lastSociety.Id;
-                    societies.Remove(lastSociety);
+                    societies.Remove(societyFound);
+                    society.Id = societyFound.Id;
                     societies.Add(society);
-
-                    //TODO IDML
-                    message = new ResponseContent("society updated");
-                    result = Ok(message);
                 }
 
+                SocietyCollection collection = new SocietyCollection();
+                collection.Societies = societies;
+                string jsonUpdate = JsonConvert.SerializeObject(collection);
+                //write string to file
+                System.IO.File.WriteAllText(pathFileMockup, jsonUpdate);
             }
             else
             {
                 try
                 {
                     var collection = _mongoDBContex.GetCollection<SocietyModel>(collectionName);
+                    var societyFound = await GetSocietyByName(society.Name);
 
-                    FindOptions<SocietyModel> options = new FindOptions<SocietyModel> { Limit = 1 };
-                    IAsyncCursor<SocietyModel> task = await collection.FindAsync(x => x.Name.Equals(society.Name), options);
-                    List<SocietyModel> list = await task.ToListAsync();
-                    SocietyModel societyFind = list.FirstOrDefault();
-
-                    if (societyFind == null)
+                    if (societyFound == null)
                     {
-                        await collection.InsertOneAsync(societyFind);
-                        //TODO IDML
-                        message = new ResponseContent("society Adedd");
-                        result = Ok(message);
+                        society.Id = ObjectId.GenerateNewId().ToString();
+                        await collection.InsertOneAsync(society);
 
                     }
-                    else
+                    else if (society.UserId == societyFound.UserId)
                     {
-                        societyFind.Name = society.Name;
-                        societyFind.Contact = society.Contact;
+                        society.Id = societyFound.Id;
                         var optionsAndReplace = new FindOneAndReplaceOptions<SocietyModel>
                         {
                             ReturnDocument = ReturnDocument.After
                         };
                         var up = await collection.FindOneAndReplaceAsync<SocietyModel>(u => u.Id == society.Id, society, optionsAndReplace);
-
-                        //TODO IDML
-                        message = new ResponseContent("Society updated");
-                        result = Ok(message);
                     }
                 }
                 catch (Exception ex)
                 {
-                    message.Message = ex.Message;
-                    result = BadRequest(message);
+                }
+            }
+
+            return society;
+        }
+        public async Task<IActionResult> DeleteSociety(SocietyModel society)
+        {
+            ResponseContent message = new ResponseContent();
+            IActionResult result = BadRequest();
+
+            if (isMockEnabled)
+            {
+                string json = System.IO.File.ReadAllText(pathFileMockup);
+                List<SocietyModel> societies = JsonConvert.DeserializeObject<SocietyCollection>(json).Societies;
+                var societyFound = await GetSocietyByName(society.Name);
+
+                if (societyFound != null)
+                {
+                    societies.Remove(societyFound);
+                    message.Message = "1 row deleted";
+                    result = Ok(message);
+                }
+
+                SocietyCollection collection = new SocietyCollection();
+                collection.Societies = societies;
+                string jsonUpdate = JsonConvert.SerializeObject(collection);
+                //write string to file
+                System.IO.File.WriteAllText(pathFileMockup, jsonUpdate);
+            }
+            else
+            {
+                try
+                {
+                    var collection = _mongoDBContex.GetCollection<SocietyModel>(collectionName);
+                    var societyFound = await GetSocietyByName(society.Name);
+
+                    if (societyFound != null)
+                    {
+                        var deleteFilter = Builders<SocietyModel>.Filter.Where(f => f.Id == society.Id);
+                        var count = await collection.DeleteOneAsync(deleteFilter);
+                        message.Message = count.DeletedCount.ToString() + " row deleted";
+                        result = Ok(message);
+
+                    }
+                }
+                catch (Exception ex)
+                {
                 }
             }
 
             return result;
         }
-
 
     }
 }

@@ -11,7 +11,8 @@ namespace IndustrialEnergy.Models
         [BsonRepresentation(BsonType.ObjectId)]
 
         public string Id { get; set; }
-        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        [Required]
         public string UserId { get; set; }
         [Required]
         public string Name { get; set; }
