@@ -1,0 +1,73 @@
+﻿
+@page "/installationCreateModal"
+@inherits InstallationComponentBase
+
+@if (Installation != null)
+{
+    <EditForm Model="@Installation">
+        <DataAnnotationsValidator />
+
+        <div id="textbox">
+            <button @onclick="HandleValidSubmit" class="btn btn-primary alignleft">Submit</button>
+
+        </div>
+
+
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert alert-danger mt-3 mb-0">@error</div>
+        }
+
+    </EditForm>
+}
+
+
+@code{
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public string societyId { get; set; }
+    public InstallationModel Installation { get; set; }
+    private string error;
+
+    protected override void OnInitialized()
+    {
+        Installation = new InstallationModel();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        Installation.SocietyId = societyId;
+        //update installation
+        Installation.Strucutres = new StrcutureSystem();
+        Installation.Strucutres.CogeneratorList = new List<Cogenerator>();
+        Installation.Strucutres.CogeneratorList.Add(new Cogenerator() { ModelName = "FirstCogenerator" });
+
+        try
+        {
+            IRestResponse response = await SaveInstallation(Installation);
+            ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                if (responseContent != null)
+                {
+                    error = responseContent.Message;
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                await ModalInstance.Close(ModalResult.Ok<InstallationModel>(JsonConvert.DeserializeObject<InstallationModel>(responseContent.Content["installation"])));
+            }
+        }
+        catch (Exception ex)
+        {
+            error = "";
+            StateHasChanged();
+        }
+
+
+    }
+
+}

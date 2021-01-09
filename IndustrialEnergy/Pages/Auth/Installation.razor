@@ -1,0 +1,19 @@
+﻿@page "/installation/{societyId}"
+@inherits InstallationComponentBase
+@inject SocietyComponentBase society
+@inject IModalService Modal
+
+<h3>SystemPage</h3>
+
+@code {
+    [Parameter]
+    public string SocietyId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (System.User != null && !string.IsNullOrEmpty(SocietyId))
+        {
+            await GetInstallationConfiguration(SocietyId);
+        }
+    }
+}

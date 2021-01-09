@@ -1,0 +1,28 @@
+{
+  "Installations": [
+    {
+      "Id": "5ff72608d8108256748dc4c2",
+      "SocietyId": "5ff25d13a056ba547c3b3c4e",
+      "Strucutres": {
+        "CogeneratorList": [
+          {
+            "InstallationId": "5ff72608d8108256748dc4c2",
+            "ModelName": "BX123"
+          }
+        ]
+      }
+    },
+    {
+      "Id": "5ff9fd37395972f3c9aa3b42",
+      "SocietyId": "5ff183d4704a1b0cf6dc8ca8",
+      "Strucutres": {
+        "CogeneratorList": [
+          {
+            "InstallationId": "5ff9fd37395972f3c9aa3b42",
+            "ModelName": "FirstCogenerator"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -20,6 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="MongoDB\Mockup\installationsCollection.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="MongoDB\Mockup\societyCollection.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

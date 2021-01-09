@@ -2,6 +2,7 @@ using Blazored.LocalStorage;
 using Blazored.Modal;
 using IndustrialEnergy.Components;
 using IndustrialEnergy.MongoDB;
+using IndustrialEnergy.Pages.Auth;
 using IndustrialEnergy.Services;
 using IndustrialEnergy.ServicesData;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -62,6 +63,8 @@ namespace IndustrialEnergy
             services.AddScoped<MockupServiceData>();
             services.AddScoped<IUserServiceData, UserServiceData>();
             services.AddScoped<ISocietyServiceData, SocietyServiceData>();
+            services.AddScoped<IInstallationServiceData, InstallationServiceData>();
+            services.AddScoped<SocietyComponentBase>();
             services.AddScoped<MenuService>();
             services.AddScoped<ToastService>();
             services.AddScoped<SpinnerService>();

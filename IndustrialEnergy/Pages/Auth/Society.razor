@@ -11,6 +11,12 @@
             <th>Name</th>
             <th>Address</th>
             <th>Contact</th>
+            <th>Edit</th>
+            <th></th>
+            @if (System.User.Role == Role.Admin)
+            {
+                <th></th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -18,10 +24,22 @@
         {
             @foreach (SocietyModel item in Societies)
             {
-                <tr class="cursor-pointer" @onclick="@(() => OpenModal(item))">
+                <tr>
                     <td>@item.Name</td>
                     <td>@item.Address</td>
                     <td>@item.Contact</td>
+                    <td>
+                        <button class="btn btn-outline-primary" @onclick="@(() => OpenModal(item))">Edit Society</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-info" @onclick="@(() => ShowInstallation(item.Id))">Show Installation</button>
+                    </td>
+                    @if (System.User.Role == Role.Admin)
+                    {
+                        <td>
+                            <button class="btn btn-info" @onclick="@(() => AddInstallation(item.Id))">Add Installation</button>
+                        </td>
+                    }
                 </tr>
             }
         }
@@ -82,6 +100,30 @@
                     }
                     StateHasChanged();
                 }
+            }
+        }
+    }
+
+    void ShowInstallation(string societyId)
+    {
+        System.NavigationManager.NavigateTo("installation/" + societyId);
+    }
+
+    async Task AddInstallation(string societyId)
+    {
+        //todo: popup to create Installation
+        var modalParameter = new ModalParameters();
+        modalParameter.Add("societyId", societyId);
+        var formModal = Modal.Show<InstallationCreateModal>("Create Installation", modalParameter);
+        var result = await formModal.Result;
+
+        if (!result.Cancelled)
+        {
+            if (result.Data != null)
+            {
+
+                StateHasChanged();
+
             }
         }
     }
