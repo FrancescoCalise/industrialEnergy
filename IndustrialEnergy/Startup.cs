@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using Blazored.Modal;
+using Blazored.Toast;
 using IndustrialEnergy.Components;
 using IndustrialEnergy.MongoDB;
 using IndustrialEnergy.Pages.Auth;
@@ -41,6 +42,7 @@ namespace IndustrialEnergy
             services.AddServerSideBlazor();
             services.AddBlazoredModal();
             services.AddBlazoredLocalStorage();
+            services.AddBlazoredToast();
             services.AddSingleton(_configuration);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(option =>
@@ -66,7 +68,6 @@ namespace IndustrialEnergy
             services.AddScoped<IInstallationServiceData, InstallationServiceData>();
             services.AddScoped<SocietyComponentBase>();
             services.AddScoped<MenuService>();
-            services.AddScoped<ToastService>();
             services.AddScoped<SpinnerService>();
 
         }

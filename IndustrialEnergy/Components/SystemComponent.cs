@@ -1,7 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using IndustrialEnergy.Models;
 using IndustrialEnergy.Services;
-using IndustrialEnergy.Utility;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -22,7 +21,6 @@ namespace IndustrialEnergy.Components
     public interface ISystemComponent
     {
         public SpinnerService SpinnerService { get; set; }
-        public ToastService ToastService { get; set; }
         public NavigationManager NavigationManager { get; set; }
         public ILocalStorageService LocalStore { get; set; }
         public IConfiguration Config { get; set; }
@@ -31,7 +29,7 @@ namespace IndustrialEnergy.Components
         public string Token { get; set; }
         public bool IsValidToken { get; set; }
         public Dictionary<string, string> Headers { get; set; }
-        Task<IRestResponse> InvokeMiddlewareAsync(string controller, string action, object requestBody, Dictionary<string, string> requesteHeader, Method method, ToastModalityShow toastShow);
+        Task<IRestResponse> InvokeMiddlewareAsync(string controller, string action, object requestBody, Dictionary<string, string> requesteHeader, Method method);
         Task Init();
         Task ClearInit();
     }
@@ -39,7 +37,6 @@ namespace IndustrialEnergy.Components
     public class SystemComponent : ISystemComponent
     {
         public SpinnerService SpinnerService { get; set; }
-        public ToastService ToastService { get; set; }
         public NavigationManager NavigationManager { get; set; }
         public ILocalStorageService LocalStore { get; set; }
         public IConfiguration Config { get; set; }
@@ -52,7 +49,6 @@ namespace IndustrialEnergy.Components
 
         public SystemComponent(
             SpinnerService spinnerService,
-            ToastService toastService,
             NavigationManager navigationManager,
             MenuService menuService,
             ILocalStorageService localStore,
@@ -60,7 +56,6 @@ namespace IndustrialEnergy.Components
             )
         {
             SpinnerService = spinnerService;
-            ToastService = toastService;
             NavigationManager = navigationManager;
             Config = config;
             LocalStore = localStore;
@@ -69,7 +64,7 @@ namespace IndustrialEnergy.Components
 
         }
 
-        public async Task<IRestResponse> InvokeMiddlewareAsync(string controller, string action, object requestBody, Dictionary<string, string> requesteHeader, Method method, ToastModalityShow toastShow)
+        public async Task<IRestResponse> InvokeMiddlewareAsync(string controller, string action, object requestBody, Dictionary<string, string> requesteHeader, Method method)
         {
             SpinnerService.ShowSpinner();
             string resource = uri + controller + action;
@@ -99,11 +94,6 @@ namespace IndustrialEnergy.Components
 
             SpinnerService.HideSpinner();
 
-            ToastLevel levelError = MapStatusCodeToToastLevel(response.StatusCode);
-
-            if (CanShowToast(levelError, toastShow))
-                ToastService.ShowToast(response.StatusCode.ToString(), responseContent.Message, levelError);
-
             return response;
         }
 
@@ -127,61 +117,6 @@ namespace IndustrialEnergy.Components
                 return json;
 
             }
-        }
-
-        private ToastLevel MapStatusCodeToToastLevel(HttpStatusCode statusCode)
-        {
-            ToastLevel level = ToastLevel.Error;
-
-            switch (statusCode)
-            {
-                case HttpStatusCode.OK:
-                case HttpStatusCode.Created:
-                case HttpStatusCode.Accepted:
-                case HttpStatusCode.Continue:
-                    level = ToastLevel.Success;
-                    break;
-                case HttpStatusCode.Unauthorized:
-                case HttpStatusCode.Forbidden:
-                case HttpStatusCode.BadRequest:
-                case HttpStatusCode.NotFound:
-                case HttpStatusCode.InternalServerError:
-                case HttpStatusCode.ServiceUnavailable:
-                case HttpStatusCode.BadGateway:
-                case HttpStatusCode.Conflict:
-                    level = ToastLevel.Error;
-                    break;
-                //case HttpStatusCode.:
-                //    level = ToastLevel.Info;
-                //    break;
-                //case HttpStatusCode.OK:
-                //    level = ToastLevel.Warning;
-                //    break;
-                default:
-                    level = ToastLevel.Info;
-                    break;
-            }
-            return level;
-        }
-
-        private bool CanShowToast(ToastLevel level, ToastModalityShow modalityShow)
-        {
-            bool canShow = false;
-
-            if (modalityShow == ToastModalityShow.All)
-            {
-                canShow = true;
-            }
-            else if (modalityShow == ToastModalityShow.OnlyError && level == ToastLevel.Error)
-            {
-                canShow = true;
-            }
-            else if (modalityShow == ToastModalityShow.OnlySuccess && level == ToastLevel.Success)
-            {
-                canShow = true;
-            }
-
-            return canShow;
         }
 
         public async Task Init()
@@ -235,7 +170,7 @@ namespace IndustrialEnergy.Components
                     var token = tokenHandler.ReadJwtToken(converToken);
                     var username = token.Claims.First(claim => claim.Type == "sub").Value;
 
-                    var userResponse = await InvokeMiddlewareAsync("/Autenticate", "/GetUserByUsername", username, Headers, Method.POST, ToastModalityShow.No);
+                    var userResponse = await InvokeMiddlewareAsync("/Autenticate", "/GetUserByUsername", username, Headers, Method.POST);
                     if (userResponse.StatusCode == HttpStatusCode.OK)
                     {
                         user = JsonConvert.DeserializeObject<UserModel>(userResponse.Content);

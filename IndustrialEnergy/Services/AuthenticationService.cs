@@ -66,7 +66,7 @@ namespace IndustrialEnergy.Services
         {
             login.Password = SecurityService.Encrypt(login.Password);
 
-            var tokenResponse = await _system.InvokeMiddlewareAsync("/Autenticate", "/Login", login, null, Method.POST, ToastModalityShow.No);
+            var tokenResponse = await _system.InvokeMiddlewareAsync("/Autenticate", "/Login", login, null, Method.POST);
             ResponseContent tokenResponseContent = JsonConvert.DeserializeObject<ResponseContent>(tokenResponse.Content);
             if (tokenResponse.StatusCode == HttpStatusCode.OK)
             {
@@ -81,7 +81,6 @@ namespace IndustrialEnergy.Services
                     var x = ex;
                 }
             }
-            _system.ToastService.ShowToast("Login", "ok", ToastLevel.Success);
             _system.NavigationManager.NavigateTo("");
 
             return tokenResponse;
@@ -98,7 +97,7 @@ namespace IndustrialEnergy.Services
             LoginUser login = new LoginUser() { Username = user.UserName, Password = user.Password };
             user.Password = SecurityService.Encrypt(login.Password);
 
-            var response = await _system.InvokeMiddlewareAsync("/Autenticate", "/Signup", user, null, Method.POST, ToastModalityShow.OnlyError);
+            var response = await _system.InvokeMiddlewareAsync("/Autenticate", "/Signup", user, null, Method.POST);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 response = await Login(login);

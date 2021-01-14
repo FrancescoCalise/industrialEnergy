@@ -1,10 +1,9 @@
 ﻿@inherits LayoutComponentBase
 @using IndustrialEnergy.Pages.Shared.Spinner
-@using IndustrialEnergy.Pages.Shared.Toast
+@using Blazored.Toast.Configuration
 
 <div class="page">
     <Spinner />
-    <Toast />
     <div class="main">
         <TopNavBar />
         <div>
@@ -12,3 +11,10 @@
         </div>
     </div>
 </div>
+
+<BlazoredToasts Position="ToastPosition.BottomCenter"
+                Timeout="2"
+                IconType="IconType.FontAwesome"
+                SuccessClass="success-toast-override"
+                SuccessIcon="fa fa-thumbs-up"
+                ErrorIcon="fa fa-bug" />

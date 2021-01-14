@@ -23,7 +23,7 @@ namespace IndustrialEnergy.Pages.Auth
         {
             if (Societies == null)
             {
-                var response = await _system.InvokeMiddlewareAsync("/Society", "/GetAllSocietiesByUser?UserId=" + _system.User.Id, null, _system.Headers, Method.GET, ToastModalityShow.No);
+                var response = await _system.InvokeMiddlewareAsync("/Society", "/GetAllSocietiesByUser?UserId=" + _system.User.Id, null, _system.Headers, Method.GET);
                 ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -36,14 +36,14 @@ namespace IndustrialEnergy.Pages.Auth
         public async Task<IRestResponse> SaveSociety(SocietyModel society)
         {
             society.UserId = _system.User.Id;
-            var response = await _system.InvokeMiddlewareAsync("/Society", "/SaveSociety", society, _system.Headers, Method.POST, ToastModalityShow.No);
+            var response = await _system.InvokeMiddlewareAsync("/Society", "/SaveSociety", society, _system.Headers, Method.POST);
 
             return response;
         }
 
         public async Task<IRestResponse> DeleteSociety(SocietyModel society)
         {
-            var response = await _system.InvokeMiddlewareAsync("/Society", "/DeleteSociety", society, _system.Headers, Method.POST, ToastModalityShow.No);
+            var response = await _system.InvokeMiddlewareAsync("/Society", "/DeleteSociety", society, _system.Headers, Method.POST);
 
             return response;
         }
