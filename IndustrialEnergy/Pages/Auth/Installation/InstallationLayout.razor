@@ -1,14 +1,26 @@
 ﻿@page "/installation/{societyId}"
 @inherits InstallationComponentBase
-@inject SocietyComponentBase society
-@inject IModalService Modal
 
-<h3>SystemPage</h3>
+@if (Model != null)
+{
+    <div class="wrapper">
+
+        <div class="sidebar">
+            <IndustrialEnergy.Pages.Auth.Installation.InstallationSideMenu Model="Model" />
+        </div>
+        <div class="body">
+            <IndustrialEnergy.Pages.Auth.Installation.InstallationBody Model="Model" />
+        </div>
+    </div>
+}
+else
+{
+
+}
 
 @code {
     [Parameter]
     public string SocietyId { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
         if (System.User != null && !string.IsNullOrEmpty(SocietyId))

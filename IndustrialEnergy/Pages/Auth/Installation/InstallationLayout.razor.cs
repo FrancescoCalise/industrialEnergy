@@ -18,18 +18,25 @@ namespace IndustrialEnergy.Pages.Auth
     {
         [Inject] private ISystemComponent _system { get; set; }
 
-        public InstallationModel Installations { get; set; }
+        public InstallationModel Model { get; set; }
 
         public async Task GetInstallationConfiguration(string SocietyId)
         {
 
             var response = await _system.InvokeMiddlewareAsync("/Installation", "/GetInstallationConfigurationBySocietyId?SocietyId=" + SocietyId, null, _system.Headers, Method.GET);
-            ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
 
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                Installations = JsonConvert.DeserializeObject<InstallationModel>(responseContent.Content["Installation"]);
+            try {
+                ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Model = JsonConvert.DeserializeObject<InstallationModel>(responseContent.Content["Installation"]);
+                }
             }
+            catch(Exception ex) { 
+            
+            }
+
+            
         }
 
         public async Task<IRestResponse> SaveInstallation(InstallationModel installation)
