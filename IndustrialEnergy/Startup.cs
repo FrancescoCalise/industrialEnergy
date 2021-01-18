@@ -43,6 +43,7 @@ namespace IndustrialEnergy
             services.AddBlazoredModal();
             services.AddBlazoredLocalStorage();
             services.AddBlazoredToast();
+            services.AddBootstrapBlazor();
             services.AddSingleton(_configuration);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(option =>

@@ -3,29 +3,30 @@
 
 @if (Model != null)
 {
-    <div class="wrapper">
-
-        <div class="sidebar">
+    @*<div class="sidebar">
             <IndustrialEnergy.Pages.Auth.Installation.InstallationSideMenu Model="Model" />
         </div>
-        <div class="body">
-            <IndustrialEnergy.Pages.Auth.Installation.InstallationBody Model="Model" />
-        </div>
+        <div class="body-right-sidebar">
+            @ChildContent
+        </div>*@
+    <div class="body-right-sidebar">
+        <IndustrialEnergy.Pages.Auth.Installation.InstallationBody Model="Model" />
     </div>
-}
-else
-{
 
 }
 
 @code {
     [Parameter]
     public string SocietyId { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         if (System.User != null && !string.IsNullOrEmpty(SocietyId))
         {
             await GetInstallationConfiguration(SocietyId);
         }
+
     }
 }

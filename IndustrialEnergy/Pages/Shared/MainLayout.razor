@@ -2,15 +2,18 @@
 @using IndustrialEnergy.Pages.Shared.Spinner
 @using Blazored.Toast.Configuration
 
-<div class="page">
+
+<div class="main">
     <Spinner />
-    <div class="main">
+    <div class="page">
         <TopNavBar />
-        <div>
-            @Body
-        </div>
+    </div>
+
+    <div class="content">
+        @Body
     </div>
 </div>
+
 
 <BlazoredToasts Position="ToastPosition.BottomCenter"
                 Timeout="2"

@@ -12,19 +12,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IndustrialEnergy</title>
     <base href="~/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link href="css/site.css" rel="stylesheet" />
-    <link href="css/toast.css" rel="stylesheet" />
-    <link href="IndustrialEnergy.styles.css" rel="stylesheet" />
+
+    <link  href="_content/BootstrapBlazor/css/bootstrap.blazor.bundle.min.css" rel="stylesheet">
+
+    <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/css/alter.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
     <link href="_content/Blazored.Modal/blazored-modal.css" rel="stylesheet" />
-    <script src="_content/Blazored.Modal/blazored.modal.js"></script>
     <link href="_content/Blazored.Toast/blazored-toast.min.css" rel="stylesheet" />
-    <script src="vendor/jquery/jquery.min.js"></script>
+    <link href="_content/Blazored.Menu/blazored-menu.css" rel="stylesheet" />
+    
+    @*<script src="vendor/jquery/jquery.min.js"></script>*@
 
-
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <component type="typeof(App)" render-mode="Server" />
@@ -36,10 +34,13 @@
         <environment include="Development">
             An unhandled exception has occurred. See browser dev tools for details.
         </environment>
+
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+    <script src="_content/BootstrapBlazor/js/bootstrap.blazor.bundle.min.js"></script>
+    <script src="_content/Blazored.Modal/blazored.modal.js"></script>
 </body>
 </html>

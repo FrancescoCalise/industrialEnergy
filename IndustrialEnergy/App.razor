@@ -1,37 +1,38 @@
 @inject NavigationManager NavigationManager
 @inject IAuthenticationService Authentication
-    <CascadingBlazoredModal>
-        <Router AppAssembly="@typeof(Program).Assembly" OnNavigateAsync="@OnNavigateAsync">
-            <Navigating>
-                @*<div class="spinner-container">
-                        <div class="spinner-center">
-                            <SpinKitCircle />
-                        </div>
-                    </div>*@
-            </Navigating>
-            <Found Context="routeData">
-                <AppRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-            </Found>
-            <NotFound>
-                @{
-                    // redirect to home page if not found
-                    NavigationManager.NavigateTo("");
-                }
-            </NotFound>
-        </Router>
-    </CascadingBlazoredModal>
 
-    @code {
-        private List<string> NotAutorizePages = new List<string>() { "login", "signUp", "forgotPassword", "logout" };
-        private async Task OnNavigateAsync(NavigationContext args)
-        {
-            if (string.IsNullOrEmpty(System.Token))
-            {
-                await System.Init();
+<CascadingBlazoredModal>
+    <Router AppAssembly="@typeof(Program).Assembly" OnNavigateAsync="@OnNavigateAsync">
+        <Navigating>
+            @*<div class="spinner-container">
+                    <div class="spinner-center">
+                        <SpinKitCircle />
+                    </div>
+                </div>*@
+        </Navigating>
+        <Found Context="routeData">
+            <AppRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            @{
+                // redirect to home page if not found
+                NavigationManager.NavigateTo("");
             }
+        </NotFound>
+    </Router>
+</CascadingBlazoredModal>
 
-            if (!NotAutorizePages.Contains(args.Path))
-                await Authentication.CheckIfTokenIsValid();
-
+@code {
+    private List<string> NotAutorizePages = new List<string>() { "login", "signUp", "forgotPassword", "logout" };
+    private async Task OnNavigateAsync(NavigationContext args)
+    {
+        if (string.IsNullOrEmpty(System.Token))
+        {
+            await System.Init();
         }
+
+        if (!NotAutorizePages.Contains(args.Path))
+            await Authentication.CheckIfTokenIsValid();
+
     }
+}

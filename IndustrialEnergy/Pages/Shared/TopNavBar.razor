@@ -1,13 +1,23 @@
 ﻿@inherits MenuComponent
 
-<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-        <div style="cursor: pointer;" onclick="window.location=''">
-            Industrial Energy
-        </div>
-
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
-            @if  (System.User == null)
+            @if (System.User != null)
+            {
+                <li class="nav-item">
+                    <NavLink class="nav-link dropdown-item" href="society">
+                        Society
+                    </NavLink>
+                </li>
+            }
+        </ul>
+        <ul class="navbar-nav">
+            @if (System.User == null)
             {
                 <li class="nav-item">
                     <NavLink class="nav-link dropdown-item" href="login">
@@ -27,42 +37,8 @@
             }
             else
             {
-                <li class="nav-item">
-                    <NavLink class="nav-link dropdown-item" href="society">
-                        Society
-                    </NavLink>
-                </li>
+                // show user information
             }
         </ul>
-
-
     </div>
-    @*<div class="mx-auto order-0">
-            <a class="navbar-brand mx-auto" href="#">Navbar 2</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>*@
-    @if (System.User != null)
-    {
-        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                    <div class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="mr-2 d-none d-lg-inline text-black-100 small">@System.User.FirstName @System.User.LastName </span>
-                        <img class="img-profile rounded-circle" src="">
-                    </div>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <NavLink class="nav-link dropdown-item" href="profile">
-                            Profile
-                        </NavLink>
-                        <div class="dropdown-divider"></div>
-                        <NavLink class="nav-link dropdown-item" href="logout">
-                            Logout
-                        </NavLink>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    }
 </nav>

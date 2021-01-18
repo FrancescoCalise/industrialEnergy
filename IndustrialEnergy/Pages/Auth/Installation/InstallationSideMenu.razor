@@ -1,18 +1,24 @@
-﻿
-@if (Model != null)
-{
-    
-}
+﻿<BlazoredMenu MenuBuilder="@MenuBuilder" />
 
 @code {
     [Parameter]
     public InstallationModel Model { get; set; }
-    private bool collapseNavMenu = true;
+    [Parameter]
+    public string SocietyId { get; set; }
+    MenuBuilder MenuBuilder = new MenuBuilder();
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
+    protected override void OnInitialized()
     {
-        collapseNavMenu = !collapseNavMenu;
+        var strctures = Model.Strucutres;
+        if (strctures != null)
+        {
+
+            if (strctures.CogeneratorList != null)
+            {
+                MenuBuilder.AddItem(1, "Cogenerator", "/installation/{societyId}/cogenerator", match: NavLinkMatch.All);
+            }
+        }
     }
+
+
 }
