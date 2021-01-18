@@ -25,6 +25,9 @@ namespace IndustrialEnergy.Models
     public class StrcutureSystem
     {
         public List<Cogenerator> CogeneratorList { get; set; }
+        public List<Boiler> BoilerList { get; set; }
+        public List<Absorber> AbsorberList { get; set; }
+        public List<HeatPump> HeatPumpList { get; set; }
         //todo: Add all machine type
     }
 }

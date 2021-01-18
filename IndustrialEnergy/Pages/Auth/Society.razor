@@ -12,10 +12,10 @@
             <th>Address</th>
             <th>Contact</th>
             <th>Edit</th>
-            <th></th>
+            <th>Info</th>
             @if (System.User.Role == Role.Admin)
             {
-                <th></th>
+                <th>Add Installation</th>
             }
         </tr>
     </thead>
@@ -114,7 +114,7 @@
         //todo: popup to create Installation
         var modalParameter = new ModalParameters();
         modalParameter.Add("societyId", societyId);
-        var formModal = Modal.Show<InstallationCreateModal>("Create Installation", modalParameter);
+        var formModal = Modal.Show<InstallationCreationModal>("Create Installation", modalParameter);
         var result = await formModal.Result;
 
         if (!result.Cancelled)

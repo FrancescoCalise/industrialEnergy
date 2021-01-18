@@ -4,13 +4,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IndustrialEnergy.Models
 {
-    public class Cogenerator
+    public class Boiler
     {
-        
         [BsonRepresentation(BsonType.ObjectId)]
         [Required]
         public string InstallationId { get; set; }
         public string ModelName { get; set; }
-        //todo add all information 
     }
 }

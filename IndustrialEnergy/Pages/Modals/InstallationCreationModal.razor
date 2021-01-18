@@ -1,6 +1,4 @@
-﻿
-@page "/installationCreateModal"
-@inherits InstallationComponentBase
+﻿@inherits InstallationComponentBase
 
 @if (Installation != null)
 {
@@ -39,6 +37,7 @@
     {
         Installation.SocietyId = societyId;
         //update installation
+
         Installation.Strucutres = new StrcutureSystem();
         Installation.Strucutres.CogeneratorList = new List<Cogenerator>();
         Installation.Strucutres.CogeneratorList.Add(new Cogenerator() { ModelName = "FirstCogenerator" });
