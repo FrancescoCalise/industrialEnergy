@@ -20,6 +20,8 @@ namespace IndustrialEnergy.ServicesData
         Task<List<SocietyModel>> GetAllSocietiesByUser(string userId);
         Task<SocietyModel> SaveSociety(SocietyModel society);
         Task<SocietyModel> GetSocietyByName(string name);
+        Task<SocietyModel> GetSocietyById(string societyId);
+
         Task<IActionResult> DeleteSociety(SocietyModel society);
     }
 
@@ -86,6 +88,27 @@ namespace IndustrialEnergy.ServicesData
             }
             return societyFuond;
         }
+        public async Task<SocietyModel> GetSocietyById(string societyId)
+        {
+            SocietyModel societyFuond = new SocietyModel();
+            if (isMockEnabled)
+            {
+                string json = System.IO.File.ReadAllText(pathFileMockup);
+                List<SocietyModel> societies = JsonConvert.DeserializeObject<SocietyCollection>(json).Societies;
+                societyFuond = societies.Find(f => f.Id == societyId);
+            }
+            else
+            {
+                var collection = _mongoDBContex.GetCollection<SocietyModel>(collectionName);
+
+                FindOptions<SocietyModel> options = new FindOptions<SocietyModel> { Limit = 1 };
+                IAsyncCursor<SocietyModel> task = await collection.FindAsync(x => x.Id.Equals(societyId), options);
+                List<SocietyModel> list = await task.ToListAsync();
+                societyFuond = list.FirstOrDefault();
+            }
+            return societyFuond;
+        }
+
         public async Task<SocietyModel> SaveSociety(SocietyModel society)
         {
             if (isMockEnabled)

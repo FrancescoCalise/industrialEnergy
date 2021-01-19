@@ -55,6 +55,26 @@ namespace IndustrialEnergy.Controllers
 
             return response;
         }
+        [HttpGet]
+        public async Task<IActionResult> GetSocietyById(string societyId)
+        {
+            //TODO IDML
+            ResponseContent messageResponse = new ResponseContent() { Message = "Imposibile to get all societies" };
+            IActionResult response = Unauthorized(messageResponse);
+            var societies = await _societyServiceData.GetSocietyById(societyId);
+
+            if (societies != null)
+            {
+                var content = new Dictionary<string, string>();
+                content.Add("Society", JsonConvert.SerializeObject(societies));
+                messageResponse.Content = content;
+                //TODO IDML
+                messageResponse.Message = "Get All Societies, Ok";
+                response = Ok(messageResponse);
+            }
+
+            return response;
+        }
 
         [HttpPost]
         public async Task<IActionResult> SaveSociety([FromBody] SocietyModel society)

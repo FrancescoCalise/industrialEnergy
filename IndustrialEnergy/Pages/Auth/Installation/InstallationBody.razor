@@ -1,14 +1,41 @@
 ﻿
-@if (@Model != null)
+@if (Model != null && Society != null)
 {
-    <h3>InstallationBody</h3>
-    <p> @Model.Id</p>
+    <h3>Installation of</h3> <p> @Society.Name</p>
+
+    @if (Cogenerators.Count > 0)
+    {
+        foreach(Cogenerator c in Cogenerators)
+        {
+            <p>@c.ModelName @c.InstallationArea</p>
+        }
+    }
+
+
 }
 
 
 @code {
     [Parameter]
     public InstallationModel Model { get; set; }
-    
+    [Parameter]
+    public SocietyModel Society { get; set; }
+
+    public List<Cogenerator> Cogenerators { get; set; }
+    public List<Boiler> Boilers { get; set; }
+    public List<Absorber> Absorbers { get; set; }
+    public List<HeatPump> HeatPumps { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Model != null && Model.Strucutres != null)
+        {
+            Cogenerators = Model.Strucutres.CogeneratorList;
+            Boilers = Model.Strucutres.BoilerList;
+            Absorbers = Model.Strucutres.AbsorberList;
+            HeatPumps = Model.Strucutres.HeatPumpList;
+        }
+
+    }
 
 }

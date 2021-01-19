@@ -10,7 +10,7 @@
             @ChildContent
         </div>*@
     <div class="body-right-sidebar">
-        <IndustrialEnergy.Pages.Auth.Installation.InstallationBody Model="Model" />
+        <IndustrialEnergy.Pages.Auth.Installation.InstallationBody Model="Model" Society="Society" />
     </div>
 
 }
@@ -23,7 +23,11 @@
     {
         if (System.User != null && !string.IsNullOrEmpty(SocietyId))
         {
-            await GetInstallationConfiguration(SocietyId);
+            if (!string.IsNullOrEmpty(SocietyId))
+            {
+                await GetSocietyById(SocietyId);
+                await GetInstallationConfiguration(SocietyId);
+            }
         }
 
     }

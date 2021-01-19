@@ -22,8 +22,22 @@ namespace IndustrialEnergy.Pages.Auth
         [Inject] private ISystemComponent _system { get; set; }
 
         public InstallationModel Model { get; set; }
+        public SocietyModel Society { get; set; }
         private string filePath = "Files/ReportSmall.xlsx";
 
+        public async Task GetSocietyById(string societyId)
+        {
+            if (!string.IsNullOrEmpty(societyId))
+            {
+                var response = await _system.InvokeMiddlewareAsync("/Society", "/GetSocietyById?SocietyId=" + societyId, null, _system.Headers, Method.GET);
+                ResponseContent responseContent = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Society = JsonConvert.DeserializeObject<SocietyModel>(responseContent.Content["Society"]);
+                }
+            }
+        }
         public async Task GetInstallationConfiguration(string SocietyId)
         {
 
