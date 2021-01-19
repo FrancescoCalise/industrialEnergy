@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IndustrialEnergy.Models
 {
-    public class Cogenerator
+    public class Sensor
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -16,20 +16,21 @@ namespace IndustrialEnergy.Models
         [Required]
         public string InstallationId { get; set; }
 
-        public string ModelName { get; set; }
+        public string Model { get; set; }
         public string InstallationArea { get; set; }
-        public List<CogeneratoreValue> CogeneratorValue { get; set; }
-        public List<Sensor> SensorList { get; set; }
-        //todo add all information 
+        public string Father { get; set; }
+        public List<SensorValue> sensorValueList { get; set; }
     }
 
-    public class CogeneratoreValue
+    public class SensorValue
     {
         public DateTime DetectionDate { get; set; }
-        public double GeneratorePower { get; set; }
-        public double Cosphi { get; set; }
-        public List<double> GeneratorCurrent { get; set; }
-        public List<double> GeneratorVoltage { get; set; }
-
+        public double DeltaTemperature { get; set; }
+        public double Energy { get; set; }
+        public double M3Instant { get; set; }
+        public double InstantPower { get; set; }
+        public double TemperatureSend { get; set; }
+        public double TemperatureBack { get; set; }
+        public double M3Total { get; set; }
     }
 }

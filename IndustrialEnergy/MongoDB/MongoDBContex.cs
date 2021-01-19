@@ -1,5 +1,4 @@
 using System;
-using IndustrialEnergy.MongoDB.Collections;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
