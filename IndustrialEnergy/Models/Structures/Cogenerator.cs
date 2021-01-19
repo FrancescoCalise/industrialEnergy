@@ -16,7 +16,6 @@ namespace IndustrialEnergy.Models
         [Required]
         public string InstallationId { get; set; }
 
-        [BsonRepresentation(BsonType.ObjectId)]
         public string ModelName { get; set; }
 
         public List<CogeneratoreValue> CogeneratorValue { get; set; }

@@ -24,11 +24,15 @@ namespace IndustrialEnergy.Controllers
     public class SocietyController : ControllerBase
     {
         private ISocietyServiceData _societyServiceData { get; set; }
+        private IInstallationServiceData _installationServiceData { get; set; }
+
         public SocietyController(
-            ISocietyServiceData societyService
+            ISocietyServiceData societyService,
+            IInstallationServiceData installationServiceData
             )
         {
             _societyServiceData = societyService;
+            _installationServiceData = installationServiceData;
         }
 
         [HttpGet]
@@ -76,7 +80,11 @@ namespace IndustrialEnergy.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteSociety([FromBody] SocietyModel society)
         {
-            IActionResult response = await _societyServiceData.DeleteSociety(society);
+            IActionResult response = BadRequest();
+            StatusCodeResult responseDeleteCollection = await _installationServiceData.DeleteInstallation(society.Id);
+            
+            if(responseDeleteCollection.StatusCode == HttpStatusCode.OK.GetHashCode())
+                 response = await _societyServiceData.DeleteSociety(society);
 
             return response;
         }

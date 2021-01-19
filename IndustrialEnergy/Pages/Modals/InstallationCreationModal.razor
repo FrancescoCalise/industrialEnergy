@@ -38,9 +38,8 @@
         Installation.SocietyId = societyId;
         //update installation
 
-        Installation.Strucutres = new StrcutureSystem();
-        Installation.Strucutres.CogeneratorList = new List<Cogenerator>();
-        Installation.Strucutres.CogeneratorList.Add(new Cogenerator() { ModelName = "FirstCogenerator" });
+        Installation.Strucutres = GetStrucutesByExcel();
+        Installation.SocietyId = societyId;
 
         try
         {

@@ -19,6 +19,7 @@ namespace IndustrialEnergy.ServicesData
     {
         Task<InstallationModel> GetInstallationBySocietyId(string societyId);
         Task<InstallationModel> SaveInstallation(InstallationModel installation);
+        Task<StatusCodeResult> DeleteInstallation(string societyId);
     }
 
     public class InstallationServiceData : ControllerBase, IInstallationServiceData
@@ -135,6 +136,48 @@ namespace IndustrialEnergy.ServicesData
             }
 
             return installation;
+        }
+
+        public async Task<StatusCodeResult> DeleteInstallation(string societyId)
+        {
+            StatusCodeResult result = BadRequest();
+
+            var installation = await GetInstallationBySocietyId(societyId);
+
+            if (installation != null)
+            {
+                if (isMockEnabled)
+                {
+                    string json = System.IO.File.ReadAllText(pathFileMockup);
+                    List<InstallationModel> installationModels = JsonConvert.DeserializeObject<CollectionInstallation>(json).Installations;
+                    installationModels.Remove(installation);
+                    result = Ok();
+
+                    CollectionInstallation collection = new CollectionInstallation();
+                    collection.Installations = installationModels;
+                    string jsonUpdate = JsonConvert.SerializeObject(collection);
+                    //write string to file
+                    System.IO.File.WriteAllText(pathFileMockup, jsonUpdate);
+                }
+                else
+                {
+                    try
+                    {
+                        var collection = _mongoDBContex.GetCollection<InstallationModel>(collectionName);
+                        var deleteFilter = Builders<InstallationModel>.Filter.Where(f => f.Id == societyId);
+                        var count = await collection.DeleteOneAsync(deleteFilter);
+                        result = Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+            }
+            else
+            {
+                result = Ok();
+            }
+            return result;
         }
     }
 }
