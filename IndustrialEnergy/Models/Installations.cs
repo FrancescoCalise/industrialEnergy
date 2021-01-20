@@ -28,7 +28,7 @@ namespace IndustrialEnergy.Models
         public List<Boiler> BoilerList { get; set; }
         public List<Absorber> AbsorberList { get; set; }
         public List<HeatPump> HeatPumpList { get; set; }
-        //todo: Add all machine type
+        public List<Sensor> SensorList { get; set; }
     }
 }
 

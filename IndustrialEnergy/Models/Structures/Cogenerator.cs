@@ -19,12 +19,11 @@ namespace IndustrialEnergy.Models
         public string ModelName { get; set; }
         public string InstallationArea { get; set; }
         public List<CogeneratoreValue> CogeneratorValue { get; set; }
-        public List<Sensor> SensorList { get; set; }
-        //todo add all information 
     }
 
     public class CogeneratoreValue
     {
+        public List<string> LabelValues { get; set; }
         public DateTime DetectionDate { get; set; }
         public double GeneratorePower { get; set; }
         public double Cosphi { get; set; }
