@@ -195,7 +195,7 @@ namespace IndustrialEnergy.ServicesData
                     try
                     {
                         var collection = _mongoDBContex.GetCollection<InstallationModel>(collectionName);
-                        var deleteFilter = Builders<InstallationModel>.Filter.Where(f => f.Id == societyId);
+                        var deleteFilter = Builders<InstallationModel>.Filter.Where(f => f.SocietyId == societyId);
                         var count = await collection.DeleteOneAsync(deleteFilter);
                         result = Ok();
                     }
