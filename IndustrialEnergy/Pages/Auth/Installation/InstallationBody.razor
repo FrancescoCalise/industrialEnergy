@@ -5,7 +5,11 @@
 
     @if (Cogenerators.Count > 0)
     {
-        foreach(Cogenerator c in Cogenerators)
+        <div style="width:25%;height:auto;">
+            <Chart Config="_config"></Chart>
+        </div>
+
+        foreach (Cogenerator c in Cogenerators)
         {
             <p>@c.ModelName @c.InstallationArea</p>
         }
@@ -20,6 +24,7 @@
     public InstallationModel Model { get; set; }
     [Parameter]
     public SocietyModel Society { get; set; }
+    private PieConfig _config;
 
     public List<Cogenerator> Cogenerators { get; set; }
     public List<Boiler> Boilers { get; set; }
@@ -31,6 +36,15 @@
         if (Model != null && Model.Strucutres != null)
         {
             Cogenerators = Model.Strucutres.CogeneratorList;
+            if (Cogenerators.Count() > 0)
+            {
+                var x = new Dictionary<string, double>();
+                x.Add("test", 0.12);
+                x.Add("prova", 1.44);
+                x.Add("box", 2.51);
+                _config = ChartService.SetConfigPieChart("title", x);
+            }
+
             Boilers = Model.Strucutres.BoilerList;
             Absorbers = Model.Strucutres.AbsorberList;
             HeatPumps = Model.Strucutres.HeatPumpList;
