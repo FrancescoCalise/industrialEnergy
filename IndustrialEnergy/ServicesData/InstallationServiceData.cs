@@ -135,6 +135,37 @@ namespace IndustrialEnergy.ServicesData
                 }
             }
 
+            for (var i = 0; i < installation.Strucutres.BoilerList.Count(); i++)
+            {
+                if (string.IsNullOrEmpty(installation.Strucutres.BoilerList[i].InstallationId))
+                {
+                    installation.Strucutres.BoilerList[i].InstallationId = installation.Id;
+                }
+            }
+
+            for (var i = 0; i < installation.Strucutres.SensorList.Count(); i++)
+            {
+                if (string.IsNullOrEmpty(installation.Strucutres.SensorList[i].InstallationId))
+                {
+                    installation.Strucutres.SensorList[i].InstallationId = installation.Id;
+                }
+            }
+
+            for (var i = 0; i < installation.Strucutres.AbsorberList.Count(); i++)
+            {
+                if (string.IsNullOrEmpty(installation.Strucutres.AbsorberList[i].InstallationId))
+                {
+                    installation.Strucutres.AbsorberList[i].InstallationId = installation.Id;
+                }
+            }
+            for (var i = 0; i < installation.Strucutres.HeatPumpList.Count(); i++)
+            {
+                if (string.IsNullOrEmpty(installation.Strucutres.HeatPumpList[i].InstallationId))
+                {
+                    installation.Strucutres.HeatPumpList[i].InstallationId = installation.Id;
+                }
+            }
+
             return installation;
         }
 

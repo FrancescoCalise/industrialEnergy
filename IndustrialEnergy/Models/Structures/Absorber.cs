@@ -7,6 +7,10 @@ namespace IndustrialEnergy.Models
 {
     public class Absorber
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+
         [BsonRepresentation(BsonType.ObjectId)]
         [Required]
         public string InstallationId { get; set; }

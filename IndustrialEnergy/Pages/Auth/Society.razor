@@ -13,7 +13,7 @@
             <th>Contact</th>
             <th>Edit</th>
             <th>Info</th>
-            @if (System.User.Role == Role.Admin)
+            @if (System.User != null && System.User.Role == Role.Admin)
             {
                 <th>Add Installation</th>
             }

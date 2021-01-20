@@ -8,6 +8,10 @@ namespace IndustrialEnergy.Models
 {
     public class Boiler
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+
         [BsonRepresentation(BsonType.ObjectId)]
         [Required]
         public string InstallationId { get; set; }
