@@ -1,0 +1,234 @@
+﻿@if (Model != null && Society != null)
+{
+    <div class="row">   <h3>Installation of the '@Society.Name' Society</h3> </div>
+    <br />
+    @if (Cogenerators.Count > 0)
+    {
+        @foreach (Cogenerator c in Cogenerators)
+        {
+            <h5>Reading table of the '@c.ModelName'  in area '@c.InstallationArea' cogenerator values</h5>
+            <table style="width:100%">
+                <caption> Reading table of the '@c.ModelName'  in area '@c.InstallationArea' cogenerator values</caption>
+                <thead>
+                    <tr>
+                        <th>Data di rilevamento</th>
+                        <th>Potenza Generatore</th>
+                        <th>CosPhi</th>
+                        <th>Corrente generatore</th>
+                        <th>Tensione generatore</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (CogeneratoreValue v in c.CogeneratorValue)
+                    {
+                        <tr>
+                            <td>@v.DetectionDate</td>
+                            <td>@v.GeneratorePower</td>
+                            <td>@v.Cosphi</td>
+                            <td>
+                                <table style="width:100%">
+                                    <tbody>
+                                        @foreach (double number in v.GeneratorCurrent)
+                                        {
+
+                                        <td>@number</td>
+                                    }
+                        </tbody>
+                    </table>
+                    </td>
+                    <td>
+                        <table style="width:100%">
+                            <tbody>
+                                @foreach (double number in v.GeneratorVoltage)
+                                {
+                                <td>@number</td>
+                            }
+                                </tbody>
+                            </table>
+                        </td>
+                        </tr>
+                    }
+                    </tbody>
+                    </table>
+                }
+
+    }
+
+    @if (Boilers.Count > 0)
+    {
+        @foreach (Boiler b in Boilers)
+        {
+            <h5>Reading table of the '@b.ModelName'  in area '@b.InstallationArea' boiler values</h5>
+            <table style="width:100%">
+                <caption>Reading table of the '@b.ModelName'  in area '@b.InstallationArea' boiler values </caption>
+                <thead>
+                    <tr>
+                        <th>Setpoint temperatura mandata </th>
+                        <th>Modulazione fiamma</th>
+                        <th>PT1 temp mandata</th>
+                        <th>Stato bruciatore</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (BoilerValue v in b.BoilerValue)
+                    {
+                        <tr>
+                            <td>@v.DetectionDate</td>
+                            <td>@v.ModulationFlame</td>
+                            <td>@v.PtTemperatureSend</td>
+                            <td>@v.BurnerState</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+    <br />
+    @if (Sensors.Count > 0)
+    {
+        var energyMeterList = Sensors.Where(s => s.EnergyMeterList != null && s.EnergyMeterList.Count > 0);
+        var pumpList = Sensors.Where(s => s.PumpSensorList != null && s.PumpSensorList.Count > 0);
+
+        @foreach (Sensor s in energyMeterList)
+        {
+            <div class="row">
+                <h5>
+                    Reading table of the '@s.ModelName'  in area '@s.InstallationArea' sensor values used in @foreach (string name in s.UsedBy)
+                    {<p style="display: inline;"> @name</p>}
+                </h5>
+            </div>
+
+            <table style="width:100%">
+
+                <caption> Reading table of the '@s.ModelName'  in area '@s.InstallationArea' sensor values</caption>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Data di rilevamento</th>
+
+                        <th>Energia (kWH)</th>
+                        <th>m3/h Instantanei</th>
+                        <th>Potenza istantanea</th>
+                        <th>Temperatura mandata</th>
+                        <th>Temperatura ritorno</th>
+                        <th>Totali m3 acqua</th>
+                        <th>Temperatura Delta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (EnergyMeter energyMeter in s.EnergyMeterList)
+                    {
+                        <tr>
+                            <td>@energyMeter.DetectionDate</td>
+                            <td>@energyMeter.Energy</td>
+                            <td>@energyMeter.M3Instant</td>
+                            <td>@energyMeter.InstantPower</td>
+                            <td>@energyMeter.TemperatureSend</td>
+                            <td>@energyMeter.TemperatureBack</td>
+                            <td>@energyMeter.M3Total</td>
+                            <td>@energyMeter.DeltaTemperature</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <br />
+        @foreach (Sensor s in pumpList)
+        {
+            <h5> Reading table of the '@s.ModelName'  in area '@s.InstallationArea' sensor values</h5>
+
+            <table style="width:100%">
+                <caption> Reading table of the '@s.ModelName'  in area '@s.InstallationArea' sensor values</caption>
+                <thead>
+                    <tr>
+                        <th>Data di rilevamento</th>
+                        <th>Temperatura mandata</th>
+                        <th>Temperatura ritorno</th>
+                        <th>Temperatura aria esterna</th>
+                    </tr>
+                </thead>
+                @foreach (PumpSensor pump in s.PumpSensorList)
+                {
+                    <tr>
+                        <td>@pump.DetectionDate</td>
+                        <td>@pump.TemperatureSend</td>
+                        <td>@pump.TemperatureBack</td>
+                        <td>@pump.TemperatureExternal</td>
+                    </tr>
+                }
+            </table>
+
+        }
+    }
+    <br />
+    @if (HeatPumps.Count > 0)
+    {
+        @foreach (HeatPump heatpump in HeatPumps)
+        {
+            <h5>Reading table of the '@heatpump.ModelName'  in area '@heatpump.InstallationArea' HeatPump values</h5>
+            <table style="width:100%">
+                <caption>Reading table of the '@heatpump.ModelName'  in area '@heatpump.InstallationArea' HeatPump values</caption>
+                <thead>
+                    <tr>
+                        <th>Data di rilevamento</th>
+                        <th>Corrente assorbita </th>
+                        <th>Portata pomba</th>
+                        <th>Potenza istantanea</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (HeatPumpValue v in heatpump.HeatPumpValue)
+                    {
+                        <tr>
+                            <td>@v.DetectionDate</td>
+                            <td>@v.CurrentAbsorbed</td>
+                            <td>@v.PompFlow</td>
+                            <td>@v.InstantPower</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+}
+
+
+@code {
+    [Parameter]
+    public InstallationModel Model { get; set; }
+    [Parameter]
+    public SocietyModel Society { get; set; }
+    private PieConfig _config;
+
+    public List<Cogenerator> Cogenerators { get; set; }
+    public List<Boiler> Boilers { get; set; }
+    public List<Absorber> Absorbers { get; set; }
+    public List<HeatPump> HeatPumps { get; set; }
+    public List<Sensor> Sensors { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Model != null && Model.Strucutres != null)
+        {
+            Cogenerators = Model.Strucutres.CogeneratorList;
+            if (Cogenerators.Count() > 0)
+            {
+                var x = new Dictionary<string, double>();
+                x.Add("test", 0.12);
+                x.Add("prova", 1.44);
+                x.Add("box", 2.51);
+                _config = ChartService.SetConfigPieChart("title", x);
+            }
+
+            Boilers = Model.Strucutres.BoilerList;
+            Absorbers = Model.Strucutres.AbsorberList;
+            HeatPumps = Model.Strucutres.HeatPumpList;
+            Sensors = Model.Strucutres.SensorList;
+        }
+
+    }
+
+}
