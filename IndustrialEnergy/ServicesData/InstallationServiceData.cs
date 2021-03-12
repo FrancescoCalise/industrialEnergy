@@ -65,6 +65,7 @@ namespace IndustrialEnergy.ServicesData
 
             return installation;
         }
+    
         public async Task<InstallationModel> SaveInstallation(InstallationModel installation)
         {
             if (isMockEnabled)
@@ -151,13 +152,6 @@ namespace IndustrialEnergy.ServicesData
                 }
             }
 
-            for (var i = 0; i < installation.Strucutres.AbsorberList.Count(); i++)
-            {
-                if (string.IsNullOrEmpty(installation.Strucutres.AbsorberList[i].InstallationId))
-                {
-                    installation.Strucutres.AbsorberList[i].InstallationId = installation.Id;
-                }
-            }
             for (var i = 0; i < installation.Strucutres.HeatPumpList.Count(); i++)
             {
                 if (string.IsNullOrEmpty(installation.Strucutres.HeatPumpList[i].InstallationId))

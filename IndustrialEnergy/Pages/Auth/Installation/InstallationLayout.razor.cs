@@ -695,7 +695,6 @@ namespace IndustrialEnergy.Pages.Auth
         {
             StrcutureSystem structure = new StrcutureSystem();
             structure.CogeneratorList = new List<Cogenerator>();
-            structure.AbsorberList = new List<Absorber>();
             structure.BoilerList = new List<Boiler>();
             structure.HeatPumpList = new List<HeatPump>();
             structure.SensorList = new List<Sensor>();
